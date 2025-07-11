@@ -1,4 +1,5 @@
 "use client";
+import CommandForm from "@/components/command-input/CommandForm";
 import { CommandTextarea } from "@/components/command-input/CommandInput";
 import ProdAtLocalhostLogo from "@/components/Logo";
 import { Input } from "@/components/ui/input";
@@ -27,12 +28,9 @@ export default function RootLayout({
             {/* Command bar – grows, stays centred, never shrinks below its content */}
             <div className="flex-1 h-full flex py-4 items-center justify-center">
               <div className="max-h-full w-1/2">
-                <CommandTextarea
-                // autoResize={false}
-                  autoCorrect="off"
-
-                  placeholder="Animate the cats in GSAP"
-                />
+              <div>
+              <CommandForm />
+              </div>
               </div>
             </div>
           </div>

@@ -2,12 +2,10 @@
 
 import * as React from "react";
 import { Textarea as ShadTextarea } from "@/components/ui/textarea";
-import { motion, AnimatePresence } from "framer-motion";
-
-type Native = React.ComponentPropsWithoutRef<typeof ShadTextarea>;
+import type { TextareaProps } from "@/components/ui/textarea";
 
 export interface CommandTextareaProps
-  extends Omit<Native, "value" | "defaultValue" | "onSubmit"> {
+  extends Omit<TextareaProps, "value" | "defaultValue" | "onSubmit"> {
   value?: string;
   defaultValue?: string;
   onSubmit?: (value: string, e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -37,36 +35,25 @@ export const CommandTextarea = React.forwardRef<
   } = props;
 
   const innerRef = React.useRef<HTMLTextAreaElement>(null);
-  const [isFocused, setIsFocused] = React.useState(false);
   const [isComposing, setIsComposing] = React.useState(false);
   const controlled = valueProp !== undefined;
   const [internal, setInternal] = React.useState(defaultValue ?? "");
   const value = controlled ? valueProp! : internal;
 
-  // Calculate line count and determine if we're in single-line mode
-  const lineCount = value.split('\n').length;
-  const isSingleLine = lineCount === 1 && value.length < 80;
-  
-  // Notion-like placeholder animation state
-  const [placeholderVisible, setPlaceholderVisible] = React.useState(true);
-  
   const resize = React.useCallback(() => {
     if (!autoResize || !innerRef.current) return;
     const el = innerRef.current;
     
     // Reset height to auto to get correct scrollHeight
     el.style.height = "auto";
-    
-    // Calculate new height
-    const newHeight = el.scrollHeight;
-    el.style.height = `${newHeight}px`;
+    // Calculate new height and set it
+    el.style.height = `${el.scrollHeight}px`;
   }, [autoResize]);
 
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       onChange?.(e);
       if (!controlled) setInternal(e.target.value);
-      if (e.target.value) setPlaceholderVisible(false);
       resize();
     },
     [onChange, controlled, resize],
@@ -77,35 +64,36 @@ export const CommandTextarea = React.forwardRef<
       onKeyDown?.(e);
       if (e.defaultPrevented || isComposing) return;
 
-      // Submit on Enter (without Shift)
+      // Submit on Enter without Shift
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         onSubmit?.(value, e);
       }
-      // Add new line on Shift+Enter
+      // Allow Shift+Enter for new lines
       else if (e.key === "Enter" && e.shiftKey) {
         e.preventDefault();
         const textarea = innerRef.current;
         if (!textarea) return;
         
-        const { selectionStart, selectionEnd } = textarea;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        
+        // Insert newline at cursor position
         const newValue = 
-          value.substring(0, selectionStart) + 
+          value.substring(0, start) + 
           '\n' + 
-          value.substring(selectionEnd);
+          value.substring(end);
         
         if (!controlled) setInternal(newValue);
         onChange?.({
           target: { value: newValue },
         } as React.ChangeEvent<HTMLTextAreaElement>);
         
-        // Move cursor to new position
-        setTimeout(() => {
-          if (textarea) {
-            textarea.selectionStart = selectionStart + 1;
-            textarea.selectionEnd = selectionStart + 1;
-          }
-        }, 0);
+        // Move cursor after inserted newline
+        requestAnimationFrame(() => {
+          textarea.selectionStart = start + 1;
+          textarea.selectionEnd = start + 1;
+        });
       }
     },
     [onKeyDown, onSubmit, value, isComposing, controlled, onChange],
@@ -114,13 +102,9 @@ export const CommandTextarea = React.forwardRef<
   React.useImperativeHandle(
     forwardedRef,
     (): CommandTextareaHandle => ({
-      focus: () => {
-        innerRef.current?.focus();
-        setIsFocused(true);
-      },
+      focus: () => innerRef.current?.focus(),
       clear: () => {
         if (!controlled) setInternal("");
-        setPlaceholderVisible(true);
         resize();
       },
       submit: () => onSubmit?.(value, {} as any),
@@ -129,41 +113,28 @@ export const CommandTextarea = React.forwardRef<
     [controlled, value, onSubmit, resize],
   );
 
-  React.useLayoutEffect(() => {
-    resize();
-    if (value) setPlaceholderVisible(false);
-  }, [value, resize]);
+  React.useLayoutEffect(resize, [value, resize]);
 
   return (
-    <div className="relative w-full">
-      <ShadTextarea
-        ref={innerRef}
-        value={value}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onCompositionStart={() => setIsComposing(true)}
-        onCompositionEnd={() => setIsComposing(false)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className={`
-          dark:w-full dark:rounded-md dark:border-none dark:border-gray-600 dark:bg-input-dark dark:text-gray-100
-          dark:outline-none dark:transition-all duration-200 ease-out dark:overflow-hidden
-          dark:focus:border-product dark:focus:ring-1 dark:focus:ring-product
-          dark:resize-none
-          !min-h-24 !text-xl !font-medium !flex !justify-center !items-center
-          ${isSingleLine ? "dark:text-lg" : "dark:text-base"}
-          ${isSingleLine ? "dark:py-[9px]" : "dark:py-3"} 
-          dark:px-3
-          ${className}
-        `}
-        style={{
-          minHeight: isSingleLine ? "auto" : "40px",
-        }}
-        {...rest}
-      />
-
-      {/* Notion-like floating placeholder */}
-    </div>
+    <ShadTextarea
+      ref={innerRef}
+      value={value}
+      onChange={handleChange}
+      onKeyDown={handleKeyDown}
+      onCompositionStart={() => setIsComposing(true)}
+      onCompositionEnd={() => setIsComposing(false)}
+      className={`
+        w-full rounded-md border-none bg-input-dark text-gray-100
+        focus:border-product focus:ring-1 focus:ring-product
+        text-base resize-none py-3 px-3 pr-12 overflow-hidden
+        dark:text-xl dark:font-medium
+        max-h-40 overflow-y-auto
+        transition-all duration-200 ease-out
+        ${className}
+      `}
+      style={{ minHeight: "40px" }}
+      {...rest}
+    />
   );
 });
 

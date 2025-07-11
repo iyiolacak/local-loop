@@ -4,7 +4,7 @@ A **local-first**, **frictionless**, gamified productivity tool. From intention 
 
 Drop the chore of to-do lists **Inspired by the flow state and reward loops of gaming (e.g., League of Legends)**, Local Loop requires **zero task maintenance**, you simply type what you did or want to do, hit Enter, and get instant XP and feedback.
 
-Local Loop lives right in your browser—no backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did
+Local Loop lives right in your browser. No backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did("fed my car")
 ---
 
 ## 🎯 Key Features

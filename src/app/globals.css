@@ -68,6 +68,26 @@
   html {
     font-family: 'PPNeueMontreal', sans-serif;
   }
+
+  /* WebKit browsers */
+  textarea::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  textarea::-webkit-scrollbar-track {
+    background: theme('colors.neutral.800');
+    border-radius: theme('borderRadius.md');
+  }
+  textarea::-webkit-scrollbar-thumb {
+    background-color: theme('colors.neutral.600');
+    border-radius: theme('borderRadius.md');
+    border: 2px solid theme('colors.neutral.800');
+    transition: background-color 0.2s ease-out;
+  }
+  textarea::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.neutral.500');
+  }
+
 }
 
 @layer utilities {
