@@ -1,10 +1,10 @@
-# Productivity at Localhost
+# Local Loop | Productivity at Localhost
 
 A **local-first**, **frictionless**, gamified productivity tool. From intention to impact in a single line and no plans, no pause, just progress.
 
-Drop the chore of to-do lists **Inspired by the flow state and reward loops of gaming (e.g., League of Legends)**, Productivity\@Localhost requires **zero task maintenance**, you simply type what you did or want to do, hit Enter, and get instant XP and feedback.
+Drop the chore of to-do lists **Inspired by the flow state and reward loops of gaming (e.g., League of Legends)**, Local Loop requires **zero task maintenance**, you simply type what you did or want to do, hit Enter, and get instant XP and feedback.
 
-Productivity@Localhost lives right in your browser—no backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did
+Local Loop lives right in your browser—no backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did
 ---
 
 ## 🎯 Key Features
@@ -25,8 +25,8 @@ Requires Node.js 18+ and npm.
 
 ```bash
 # Clone the repo
-git clone https://github.com/iyiolacak/productivity-at-localhost.git
-cd productivity-at-localhost
+git clone https://github.com/iyiolacak/local-loop.git
+cd local-loop
 
 # Install dependencies
 npm install
@@ -154,6 +154,6 @@ The model returns one of the function calls, which the client handles and update
 
 ## 📜 License
 
-MIT © Mehmet Karabacak
+MIT © iyiolacak
 
-*With Productivity\@Localhost, every word you throw is a tracked and encouraged further progress. No lists. No distractions. Just flow.*
+*With Local Loop, every word you throw is a tracked and encouraged further progress. No lists. No distractions. Just flow.*
