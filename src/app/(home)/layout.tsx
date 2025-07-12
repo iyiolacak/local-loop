@@ -1,6 +1,6 @@
 'use client';
 
-import { useLiteMode } from "@/lib/useLiteMode";
+import { useLiteMode } from "@/app/hooks/useLiteMode";
 
 
 export default function Page({children}: {children: React.ReactNode}) {

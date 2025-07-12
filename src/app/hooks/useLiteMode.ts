@@ -1,5 +1,5 @@
 import React from "react";
-import { isLowEndDevice } from "./capabilities";
+import { isLowEndDevice } from "../../lib/capabilities";
 
 export const useLiteMode = () => {
     const [isLiteMode, setIsLiteMode] = React.useState(false);

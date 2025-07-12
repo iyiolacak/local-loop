@@ -130,8 +130,8 @@ export const CommandTextarea = React.forwardRef<
       className={`
         w-full rounded-md border-none bg-input-dark text-gray-100
         focus:border-product focus:ring-1 focus:ring-product
-        text-base resize-none py-3 px-3 pr-12 overflow-hidden
-        dark:text-xl dark:font-medium
+         resize-none py-3 px-3 pr-12 overflow-hidden
+        dark:text-lg md:dark:text-xl dark:font-medium
         !h-14 dark:max-h-40 overflow-y-auto
         transition-all duration-200 ease-out
         ${className}
