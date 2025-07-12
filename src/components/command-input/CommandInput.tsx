@@ -40,6 +40,10 @@ export const CommandTextarea = React.forwardRef<
   const [internal, setInternal] = React.useState(defaultValue ?? "");
   const value = controlled ? valueProp! : internal;
 
+  // Check text line amount so, if it is a long structured text, make sure experience is more compact and power-user friendly
+
+
+  
   const resize = React.useCallback(() => {
     if (!autoResize || !innerRef.current) return;
     const el = innerRef.current;
@@ -128,7 +132,7 @@ export const CommandTextarea = React.forwardRef<
         focus:border-product focus:ring-1 focus:ring-product
         text-base resize-none py-3 px-3 pr-12 overflow-hidden
         dark:text-xl dark:font-medium
-        max-h-40 overflow-y-auto
+        !h-14 dark:max-h-40 overflow-y-auto
         transition-all duration-200 ease-out
         ${className}
       `}

@@ -2,7 +2,6 @@
 import { CommandForm }from "@/components/command-input/CommandForm";
 import { CommandTextarea } from "@/components/command-input/CommandInput";
 import ProdAtLocalhostLogo from "@/components/Logo";
-import { Input } from "@/components/ui/input";
 
 export default function RootLayout({
   children,
