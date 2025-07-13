@@ -1,23 +1,24 @@
 // components/AnimatedIconSwitcher.tsx
-"use client"
+"use client";
 
-import { motion, AnimatePresence } from "framer-motion"
-import React from "react"
+import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
 
 interface AnimatedIconSwitcherProps {
-  show: boolean
-  enterIcon: React.ReactNode
-  exitIcon: React.ReactNode
-  duration?: number
+  show: boolean;
+  libraryLoadingIcon: { isLoading: boolean; loadingSpinner: React.ReactNode };
+  enterIcon: React.ReactNode;
+  exitIcon: React.ReactNode;
+  duration?: number;
 }
 
 export const AnimatedIconSwitcher: React.FC<AnimatedIconSwitcherProps> = ({
   show,
+  libraryLoadingIcon,
   enterIcon,
   exitIcon,
   duration = 0.15,
 }) => {
-
   return (
     <AnimatePresence initial={false} mode="wait">
       <motion.div
@@ -28,8 +29,15 @@ export const AnimatedIconSwitcher: React.FC<AnimatedIconSwitcherProps> = ({
         transition={{ duration, ease: [0.25, 0.1, 0.25, 1.0] }}
         className="flex items-center justify-center"
       >
-        {show ? enterIcon : exitIcon}
+        {libraryLoadingIcon.isLoading
+          ? libraryLoadingIcon.loadingSpinner
+          : show
+          ? enterIcon
+          : exitIcon}
+        {/* Render the appropriate icon based on the 'show' prop */}
+        {/* {libraryLoadingIcon.isLoading ? libraryLoadingIcon.loadingSpinner : */}
+        {/* {show ? enterIcon : exitIcon} */}
       </motion.div>
     </AnimatePresence>
-  )
-}
+  );
+};

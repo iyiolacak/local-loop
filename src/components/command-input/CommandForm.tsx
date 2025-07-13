@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "../ui/tooltip";
+import { Loader2 } from "lucide-react";
 
 /**
  * Public API ----------------------------------------------------------------
@@ -22,7 +23,7 @@ export interface CommandFormProps {
   /** Callback fired when the user sends text */
   onSubmit: (value: string) => void;
   /** Optional callback fired when voice input is requested */
-  onVoice?: () => void;
+  initiateVoiceRecord?: () => void;
   /** Placeholder for the textarea  */
   placeholder?: string;
 }
@@ -35,7 +36,7 @@ export interface CommandFormProps {
  */
 export function useCommandForm({
   onSubmit,
-  onVoice,
+  initiateVoiceRecord,
   placeholder = "Animate the cats in GSAP",
 }: CommandFormProps) {
   const [text, setText] = React.useState("");
@@ -58,9 +59,10 @@ export function useCommandForm({
     if (hasText) {
       handleSubmit();
     } else {
-      onVoice?.();
+      
+      initiateVoiceRecord?.();
     }
-  }, [hasText, handleSubmit, onVoice]);
+  }, [hasText, handleSubmit, initiateVoiceRecord]);
 
   const tooltipMain = hasText ? "Send privately*" : "Record privately*";
 
@@ -89,34 +91,9 @@ export const CommandForm: React.FC<CommandFormProps> = (props) => {
     placeholder,
   } = useCommandForm(props);
 
-  type VoiceRecordingPermission =
-    | "denied"
-    | "granted"
-    | "prompting"
-    | "error"
-    | "shouldAskSometime";
-  type VoiceRecording = {
-    permissionRequest: VoiceRecordingPermission;
-    recording: boolean;
-  };
-
-  const [voiceRecording, setVoiceRecording] = React.useState<VoiceRecording>({
-    permissionRequest: "shouldAskSometime",
-    recording: false,
-  });
-
   return (
     <TooltipProvider delayDuration={300}>
       <div className="relative flex w-full max-w-2xl">
-        {/* Text input ------------------------------------------------------- */}
-        {voiceRecording.permissionRequest != "prompting" && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-            <span className="text-sm text-muted-foreground">
-              Requesting microphone access...
-            </span>
-          </div>
-        )
-          }
         <CommandTextarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -151,12 +128,48 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   hasText,
   tooltipMain,
   onClick,
-}) => (
+}) => {
+  const [isWaveformRecorderLoaded, setIsWaveformRecorderLoaded] = React.useState<"loaded" | "loading" | { errorReason: string} | false>(false);
+
+  const recorderPromiseRef = React.useRef<Promise<void> | null>(null);
+
+const preloadRecorder = React.useCallback(() => {
+  if (recorderPromiseRef.current) return recorderPromiseRef.current
+
+  const load = (async () => {
+    try {
+      setIsWaveformRecorderLoaded("loading")
+
+      const [{ default: WaveSurfer }, { default: RecordPlugin }] = await Promise.all([
+        import('wavesurfer.js'),
+        import('wavesurfer.js/dist/plugins/record.esm.js'),
+      ])
+
+      // You can store or use these now
+      console.log(WaveSurfer, RecordPlugin)
+
+      setIsWaveformRecorderLoaded("loaded")
+      console.log("[ActionButton] WaveformRecorder preloaded successfully")
+    } catch (error: any) {
+      console.error("[ActionButton] WaveformRecorder preload failed:", error)
+      setIsWaveformRecorderLoaded({ errorReason: error.message })
+      recorderPromiseRef.current = null
+    }
+  })()
+
+  recorderPromiseRef.current = load
+  return load
+}, [])
+
+return (
   <Tooltip delayDuration={120}>
     <TooltipTrigger asChild>
       <Button
         type="button"
         onClick={onClick}
+        onMouseEnter={preloadRecorder}
+        onTouchStart={preloadRecorder}
+        disabled={isWaveformRecorderLoaded === "loading"}
         aria-label={hasText ? "Send message" : "Record voice note"}
         className="
           absolute right-2 top-2 flex h-10 w-14 items-center justify-center
@@ -170,6 +183,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       >
         <AnimatedIconSwitcher
           show={hasText}
+          libraryLoadingIcon={{
+            isLoading: isWaveformRecorderLoaded === "loading",
+            loadingSpinner: (
+              <span className="animate-spin">
+                <Loader2 strokeWidth={2} width={24} height={24} />
+              </span>
+            ),
+          }}
           enterIcon={
             <ArrowUp
               width={36}
@@ -206,4 +227,4 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       </p>
     </TooltipContent>
   </Tooltip>
-);
+)};
