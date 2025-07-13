@@ -15,6 +15,7 @@ import {
   TooltipContent,
 } from "../ui/tooltip";
 import { Loader2 } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 /**
  * Public API ----------------------------------------------------------------
@@ -59,7 +60,6 @@ export function useCommandForm({
     if (hasText) {
       handleSubmit();
     } else {
-      
       initiateVoiceRecord?.();
     }
   }, [hasText, handleSubmit, initiateVoiceRecord]);
@@ -90,25 +90,30 @@ export const CommandForm: React.FC<CommandFormProps> = (props) => {
     handleVoiceOrSubmit,
     placeholder,
   } = useCommandForm(props);
+  const [voiceRecording, setVoiceRecording] = React.useState(true);
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="relative flex w-full max-w-2xl">
-        <CommandTextarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onSubmit={handleSubmit}
-          placeholder={placeholder}
-          className="dark:pr-20"
-        />
+      {/* Define mode(record or typing(including no text)) */}
+        <div className="relative flex w-full max-w-2xl">
+          <CommandTextarea
+            value={text}
+            voiceRecording={voiceRecording}
+            onChange={(e) => setText(e.target.value)}
+            onSubmit={handleSubmit}
+            placeholder={voiceRecording ? "" : placeholder}
+            className="dark:pr-20"
+          />
 
-        {/* Action button ---------------------------------------------------- */}
-        <ActionButton
-          hasText={hasText}
-          tooltipMain={tooltipMain}
-          onClick={handleVoiceOrSubmit}
-        />
-      </div>
+          {/* Action button ---------------------------------------------------- */}
+          <ActionButton
+          voiceRecording={voiceRecording}
+            hasText={hasText}
+            tooltipMain={tooltipMain}
+            // handleVoiceOrSubmit
+            onClick={() => {console.log(voiceRecording); setVoiceRecording((prev) => !prev)}}
+          />
+        </div>
     </TooltipProvider>
   );
 };
@@ -119,6 +124,7 @@ export const CommandForm: React.FC<CommandFormProps> = (props) => {
  * the parent component aware of their implementation details.
  */
 interface ActionButtonProps {
+  voiceRecording: boolean;
   hasText: boolean;
   tooltipMain: string;
   onClick: () => void;
@@ -129,49 +135,53 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   tooltipMain,
   onClick,
 }) => {
-  const [isWaveformRecorderLoaded, setIsWaveformRecorderLoaded] = React.useState<"loaded" | "loading" | { errorReason: string} | false>(false);
+  const [isWaveformRecorderLoaded, setIsWaveformRecorderLoaded] =
+    React.useState<"loaded" | "loading" | { errorReason: string } | false>(
+      false
+    );
 
   const recorderPromiseRef = React.useRef<Promise<void> | null>(null);
 
-const preloadRecorder = React.useCallback(() => {
-  if (recorderPromiseRef.current) return recorderPromiseRef.current
+  const preloadRecorder = React.useCallback(() => {
+    if (recorderPromiseRef.current) return recorderPromiseRef.current;
 
-  const load = (async () => {
-    try {
-      setIsWaveformRecorderLoaded("loading")
+    const load = (async () => {
+      try {
+        setIsWaveformRecorderLoaded("loading");
 
-      const [{ default: WaveSurfer }, { default: RecordPlugin }] = await Promise.all([
-        import('wavesurfer.js'),
-        import('wavesurfer.js/dist/plugins/record.esm.js'),
-      ])
+        const [{ default: WaveSurfer }, { default: RecordPlugin }] =
+          await Promise.all([
+            import("wavesurfer.js"),
+            import("wavesurfer.js/dist/plugins/record.esm.js"),
+          ]);
 
-      // You can store or use these now
-      console.log(WaveSurfer, RecordPlugin)
+        // You can store or use these now
+        console.log(WaveSurfer, RecordPlugin);
 
-      setIsWaveformRecorderLoaded("loaded")
-      console.log("[ActionButton] WaveformRecorder preloaded successfully")
-    } catch (error: any) {
-      console.error("[ActionButton] WaveformRecorder preload failed:", error)
-      setIsWaveformRecorderLoaded({ errorReason: error.message })
-      recorderPromiseRef.current = null
-    }
-  })()
+        setIsWaveformRecorderLoaded("loaded");
+        console.log("[ActionButton] WaveformRecorder preloaded successfully");
+      } catch (error: any) {
+        console.error("[ActionButton] WaveformRecorder preload failed:", error);
+        setIsWaveformRecorderLoaded({ errorReason: error.message });
+        recorderPromiseRef.current = null;
+      }
+    })();
 
-  recorderPromiseRef.current = load
-  return load
-}, [])
+    recorderPromiseRef.current = load;
+    return load;
+  }, []);
 
-return (
-  <Tooltip delayDuration={120}>
-    <TooltipTrigger asChild>
-      <Button
-        type="button"
-        onClick={onClick}
-        onMouseEnter={preloadRecorder}
-        onTouchStart={preloadRecorder}
-        disabled={isWaveformRecorderLoaded === "loading"}
-        aria-label={hasText ? "Send message" : "Record voice note"}
-        className="
+  return (
+    <Tooltip delayDuration={120}>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          onClick={onClick}
+          onMouseEnter={preloadRecorder}
+          onTouchStart={preloadRecorder}
+          disabled={isWaveformRecorderLoaded === "loading"}
+          aria-label={hasText ? "Send message" : "Record voice note"}
+          className="
           absolute right-2 top-2 flex h-10 w-14 items-center justify-center
           rounded-md bg-product p-0 text-background text-xl
           shadow-lg hover:bg-product/90 active:scale-90
@@ -180,51 +190,52 @@ return (
           focus-visible:ring-ring focus-visible:ring-offset-2
           group hover:w-20
         "
-      >
-        <AnimatedIconSwitcher
-          show={hasText}
-          libraryLoadingIcon={{
-            isLoading: isWaveformRecorderLoaded === "loading",
-            loadingSpinner: (
-              <span className="animate-spin">
-                <Loader2 strokeWidth={2} width={24} height={24} />
-              </span>
-            ),
-          }}
-          enterIcon={
-            <ArrowUp
-              width={36}
-              height={36}
-              className="transition-all size-5"
-              strokeWidth={3}
-            />
-          }
-          exitIcon={
-            <Microphone
-              width={36}
-              height={36}
-              className="transition-all size-5"
-              strokeWidth={2}
-            />
-          }
-        />
-      </Button>
-    </TooltipTrigger>
+        >
+          <AnimatedIconSwitcher
+            show={hasText}
+            libraryLoadingIcon={{
+              isLoading: isWaveformRecorderLoaded === "loading",
+              loadingSpinner: (
+                <span className="animate-spin">
+                  <Loader2 strokeWidth={2} width={24} height={24} />
+                </span>
+              ),
+            }}
+            enterIcon={
+              <ArrowUp
+                width={36}
+                height={36}
+                className="transition-all size-5"
+                strokeWidth={3}
+              />
+            }
+            exitIcon={
+              <Microphone
+                width={36}
+                height={36}
+                className="transition-all size-5"
+                strokeWidth={2}
+              />
+            }
+          />
+        </Button>
+      </TooltipTrigger>
 
-    <TooltipContent
-      side="right"
-      align="end"
-      className="max-w-[260px] rounded-lg px-4 py-3 text-sm leading-snug shadow-lg"
-    >
-      <p className="font-medium text-md flex text-end items-end mb-1.5">
-        <Lock strokeWidth={2} />
-        {tooltipMain}
-      </p>
-      <p className="text-xs text-muted-foreground font-medium">
-        * Routed only to the OpenAI ChatGPT API you already use.
-        <br />
-        Otherwise, everything stays on your device.
-      </p>
-    </TooltipContent>
-  </Tooltip>
-)};
+      <TooltipContent
+        side="right"
+        align="end"
+        className="max-w-[260px] rounded-lg px-4 py-3 text-sm leading-snug shadow-lg"
+      >
+        <p className="font-medium text-md flex text-end items-end mb-1.5">
+          <Lock strokeWidth={2} />
+          {tooltipMain}
+        </p>
+        <p className="text-xs text-muted-foreground font-medium">
+          * Routed only to the OpenAI ChatGPT API you already use.
+          <br />
+          Otherwise, everything stays on your device.
+        </p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};

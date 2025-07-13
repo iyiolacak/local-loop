@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Textarea as ShadTextarea } from "@/components/ui/textarea";
 import type { TextareaProps } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 export interface CommandTextareaProps
   extends Omit<TextareaProps, "value" | "defaultValue" | "onSubmit"> {
@@ -10,6 +11,7 @@ export interface CommandTextareaProps
   defaultValue?: string;
   onSubmit?: (value: string, e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   autoResize?: boolean;
+  voiceRecording: boolean;
 }
 
 export interface CommandTextareaHandle {
@@ -31,6 +33,7 @@ export const CommandTextarea = React.forwardRef<
     onSubmit,
     autoResize = true,
     className,
+    voiceRecording,
     ...rest
   } = props;
 
@@ -127,7 +130,7 @@ export const CommandTextarea = React.forwardRef<
       onKeyDown={handleKeyDown}
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}
-      className={`
+      className={cn(`
         w-full rounded-md border-none bg-input-dark text-gray-100
         focus:border-product focus:ring-1 focus:ring-product
          resize-none py-3 px-3 pr-12 overflow-hidden
@@ -135,7 +138,7 @@ export const CommandTextarea = React.forwardRef<
         !h-14 dark:max-h-40 overflow-y-auto
         transition-all duration-200 ease-out
         ${className}
-      `}
+      `,{"dark:bg-product text-product placeholder:text-product": voiceRecording})}
       style={{ minHeight: "40px" }}
       {...rest}
     />
