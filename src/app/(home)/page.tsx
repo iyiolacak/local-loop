@@ -1,13 +1,17 @@
 "use client";
-import { CommandForm }from "@/components/command-input/CommandForm";
+import { CommandForm } from "@/components/command-input/CommandForm";
 import { CommandTextarea } from "@/components/command-input/CommandInput";
 import ProdAtLocalhostLogo from "@/components/Logo";
+import { RecorderDemo } from "./RecorderDemo.bak";
+import Footer from "./footer";
+import { useRef } from "react";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const audioVisualizerRef = useRef<HTMLDivElement>(null);
   return (
     <html lang="en">
       {/*
@@ -26,10 +30,10 @@ export default function RootLayout({
 
             {/* Command bar – grows, stays centred, never shrinks below its content */}
             <div className="flex-1 h-full flex py-4 items-center justify-center">
-              <div className="max-h-full w-full md:w-1/2">
-              <div>
-              <CommandForm />
-              </div>
+              {/* THIS PARENT DIV IS WHERE AUDIO VISUALIZER SHOULD BE REFLECTED TO */}
+              <div className="max-h-full w-full md:w-1/2"
+              ref={audioVisualizerRef}>
+                  <CommandForm waveSurferRef={audioVisualizerRef} onSubmit={() => {}} />
               </div>
             </div>
           </div>
@@ -41,9 +45,7 @@ export default function RootLayout({
         </main>
 
         {/* ---------- Footer ---------- */}
-        <footer className="flex-none h-[40px] flex items-center justify-center border-t text-sm">
-          © 2025
-        </footer>
+        <Footer />
       </body>
     </html>
   );

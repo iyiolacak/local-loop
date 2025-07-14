@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Textarea as ShadTextarea } from "@/components/ui/textarea";
-import type { TextareaProps } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 export interface CommandTextareaProps
@@ -42,10 +41,7 @@ export const CommandTextarea = React.forwardRef<
   const controlled = valueProp !== undefined;
   const [internal, setInternal] = React.useState(defaultValue ?? "");
   const value = controlled ? valueProp! : internal;
-
   // Check text line amount so, if it is a long structured text, make sure experience is more compact and power-user friendly
-
-
   
   const resize = React.useCallback(() => {
     if (!autoResize || !innerRef.current) return;
@@ -65,6 +61,8 @@ export const CommandTextarea = React.forwardRef<
     },
     [onChange, controlled, resize],
   );
+
+    // Clip-path polygon animates from a small shape at bottom-right to full rectangle
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -131,17 +129,17 @@ export const CommandTextarea = React.forwardRef<
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}
       className={cn(`
-        w-full rounded-md border-none bg-input-dark text-gray-100
+        relative z-10 w-full rounded-md border-none bg-input-dark text-gray-100
         focus:border-product focus:ring-1 focus:ring-product
-         resize-none py-3 px-3 pr-12 overflow-hidden
+        resize-none py-3 px-3 pr-12 overflow-hidden
         dark:text-lg md:dark:text-xl dark:font-medium
         !h-14 dark:max-h-40 overflow-y-auto
         transition-all duration-200 ease-out
         ${className}
-      `,{"dark:bg-product text-product placeholder:text-product": voiceRecording})}
+      `,{"dark:text-input-dark placeholder:text-input-dark cursor-default": voiceRecording})}
       style={{ minHeight: "40px" }}
       {...rest}
-    />
+      />
   );
 });
 
