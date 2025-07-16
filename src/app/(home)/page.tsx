@@ -31,18 +31,21 @@ export default function RootLayout({
             {/* Command bar – grows, stays centred, never shrinks below its content */}
             <div className="flex-1 h-full flex py-4 items-center justify-center">
               {/* THIS PARENT DIV IS WHERE AUDIO VISUALIZER SHOULD BE REFLECTED TO */}
-              <div className="max-h-full w-full md:w-1/2"
-              ref={audioVisualizerRef}>
-                  <CommandForm waveSurferRef={audioVisualizerRef} onSubmit={() => {}} />
+              <div
+                className="max-h-full w-full md:w-1/2"
+                ref={audioVisualizerRef}
+              >
+                <CommandForm
+                  containerRef={audioVisualizerRef}
+                  onSubmit={() => {}}
+                />
               </div>
             </div>
           </div>
         </header>
 
         {/* ---------- Main ---------- */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 h-screen p-6 overflow-y-auto">{children}</main>
 
         {/* ---------- Footer ---------- */}
         <Footer />

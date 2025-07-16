@@ -5,68 +5,83 @@
 
 /* globals.css */
 
-
 /* app/globals.css */
 
 @layer base {
   @font-face {
-    font-family: 'PPNeueMontreal';
-    src: url('/fonts/PPNeueMontreal-Book.otf') format('opentype');
+    font-family: "PPNeueMontreal";
+    src: url("/fonts/PPNeueMontreal-Book.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
   }
 
   @font-face {
-    font-family: 'PPNeueMontreal';
-    src: url('/fonts/PPNeueMontreal-Italic.otf') format('opentype');
+    font-family: "PPNeueMontreal";
+    src: url("/fonts/PPNeueMontreal-Italic.otf") format("opentype");
     font-weight: 400;
     font-style: italic;
     font-display: swap;
   }
 
   @font-face {
-    font-family: 'PPNeueMontreal';
-    src: url('/fonts/PPNeueMontreal-Medium.otf') format('opentype');
+    font-family: "PPNeueMontreal";
+    src: url("/fonts/PPNeueMontreal-Medium.otf") format("opentype");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
   }
 
   @font-face {
-    font-family: 'PPNeueMontreal';
-    src: url('/fonts/PPNeueMontreal-SemiBolditalic.otf') format('opentype');
+    font-family: "PPNeueMontreal";
+    src: url("/fonts/PPNeueMontreal-SemiBolditalic.otf") format("opentype");
     font-weight: 600;
     font-style: italic;
     font-display: swap;
   }
 
   @font-face {
-    font-family: 'PPNeueMontreal';
-    src: url('/fonts/PPNeueMontreal-Bold.otf') format('opentype');
+    font-family: "PPNeueMontreal";
+    src: url("/fonts/PPNeueMontreal-Bold.otf") format("opentype");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
   }
 
   @font-face {
-    font-family: 'PPNeueMontreal';
-    src: url('/fonts/PPNeueMontreal-Thin.otf') format('opentype');
+    font-family: "PPNeueMontreal";
+    src: url("/fonts/PPNeueMontreal-Thin.otf") format("opentype");
     font-weight: 100;
     font-style: normal;
     font-display: swap;
   }
   /* Minercraftory (for font-minercraftory) */
-@font-face {
-  font-family: 'Monster Friend Fore';
-  src: url('/fonts/MonsterFriendFore.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+  @font-face {
+    font-family: "Monster Friend Fore";
+    src: url("/fonts/MonsterFriendFore.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
   /* override default sans to PPNeueMontreal */
   html {
-    font-family: 'PPNeueMontreal', sans-serif;
+    font-family: "PPNeueMontreal", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    @apply font-medium; /* This applies font-weight: 500 globally */
+    letter-spacing: 0.025em;
+  }
+
+  /* Tight kerning for headings, relaxed for small text */
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.05em;
+  }
+  small,
+  .caption {
+    letter-spacing: 0.025em;
   }
 
   /* WebKit browsers */
@@ -75,38 +90,35 @@
     height: 8px;
   }
   textarea::-webkit-scrollbar-track {
-    background: theme('colors.neutral.800');
-    border-radius: theme('borderRadius.md');
+    background: theme("colors.neutral.800");
+    border-radius: theme("borderRadius.md");
   }
   textarea::-webkit-scrollbar-thumb {
-    background-color: theme('colors.neutral.600');
-    border-radius: theme('borderRadius.md');
-    border: 2px solid theme('colors.neutral.800');
+    background-color: theme("colors.neutral.600");
+    border-radius: theme("borderRadius.md");
+    border: 2px solid theme("colors.neutral.800");
     transition: background-color 0.2s ease-out;
   }
   textarea::-webkit-scrollbar-thumb:hover {
-    background-color: theme('colors.neutral.500');
+    background-color: theme("colors.neutral.500");
   }
-
 }
 
 @layer utilities {
   .font-minercraftory {
-    font-family: 'Monster Friend Fore', monospace;
+    font-family: "Monster Friend Fore", monospace;
   }
 }
 
-
 @layer utilities {
   .ring-wrapper {
-    background-image: url('/textarea-ring.png'); /* Replace with your texture path */
+    background-image: url("/textarea-ring.png"); /* Replace with your texture path */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     box-shadow: 0 0 12px #00ff00; /* Optional soft glow */
   }
 }
-
 
 @theme inline {
   --color-background: var(--background);
@@ -153,8 +165,8 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
-  --foreground: #231B1B;
-  --input-dark: #1E1F21;
+  --foreground: #231b1b;
+  --input-dark: #1e1f21;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -188,7 +200,7 @@
 
 .dark {
   --background: #141517;
-  --input-dark: #1E1F21;
+  --input-dark: #1e1f21;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);

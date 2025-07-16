@@ -8,7 +8,10 @@ export interface CommandTextareaProps
   extends Omit<TextareaProps, "value" | "defaultValue" | "onSubmit"> {
   value?: string;
   defaultValue?: string;
-  onSubmit?: (value: string, e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onSubmit?: (
+    value: string,
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => void;
   autoResize?: boolean;
   voiceRecording: boolean;
 }
@@ -42,11 +45,11 @@ export const CommandTextarea = React.forwardRef<
   const [internal, setInternal] = React.useState(defaultValue ?? "");
   const value = controlled ? valueProp! : internal;
   // Check text line amount so, if it is a long structured text, make sure experience is more compact and power-user friendly
-  
+
   const resize = React.useCallback(() => {
     if (!autoResize || !innerRef.current) return;
     const el = innerRef.current;
-    
+
     // Reset height to auto to get correct scrollHeight
     el.style.height = "auto";
     // Calculate new height and set it
@@ -59,10 +62,10 @@ export const CommandTextarea = React.forwardRef<
       if (!controlled) setInternal(e.target.value);
       resize();
     },
-    [onChange, controlled, resize],
+    [onChange, controlled, resize]
   );
 
-    // Clip-path polygon animates from a small shape at bottom-right to full rectangle
+  // Clip-path polygon animates from a small shape at bottom-right to full rectangle
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -79,21 +82,19 @@ export const CommandTextarea = React.forwardRef<
         e.preventDefault();
         const textarea = innerRef.current;
         if (!textarea) return;
-        
+
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        
+
         // Insert newline at cursor position
-        const newValue = 
-          value.substring(0, start) + 
-          '\n' + 
-          value.substring(end);
-        
+        const newValue =
+          value.substring(0, start) + "\n" + value.substring(end);
+
         if (!controlled) setInternal(newValue);
         onChange?.({
           target: { value: newValue },
         } as React.ChangeEvent<HTMLTextAreaElement>);
-        
+
         // Move cursor after inserted newline
         requestAnimationFrame(() => {
           textarea.selectionStart = start + 1;
@@ -101,7 +102,7 @@ export const CommandTextarea = React.forwardRef<
         });
       }
     },
-    [onKeyDown, onSubmit, value, isComposing, controlled, onChange],
+    [onKeyDown, onSubmit, value, isComposing, controlled, onChange]
   );
 
   React.useImperativeHandle(
@@ -115,7 +116,7 @@ export const CommandTextarea = React.forwardRef<
       submit: () => onSubmit?.(value, {} as any),
       element: innerRef.current,
     }),
-    [controlled, value, onSubmit, resize],
+    [controlled, value, onSubmit, resize]
   );
 
   React.useLayoutEffect(resize, [value, resize]);
@@ -128,18 +129,26 @@ export const CommandTextarea = React.forwardRef<
       onKeyDown={handleKeyDown}
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}
-      className={cn(`
+      className={cn(
+        `
         relative z-10 w-full rounded-md border-none bg-input-dark text-gray-100
         focus:border-product focus:ring-1 focus:ring-product
         resize-none py-3 px-3 pr-12 overflow-hidden
         dark:text-lg md:dark:text-xl dark:font-medium
         !h-14 dark:max-h-40 overflow-y-auto
         transition-all duration-200 ease-out
+
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-product
         ${className}
-      `,{"dark:text-input-dark placeholder:text-input-dark cursor-default": voiceRecording})}
+      `,
+        {
+          "dark:text-input-dark placeholder:text-input-dark cursor-default":
+            voiceRecording,
+        }
+      )}
       style={{ minHeight: "40px" }}
       {...rest}
-      />
+    />
   );
 });
 

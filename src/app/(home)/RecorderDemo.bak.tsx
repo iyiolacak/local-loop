@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js'
-import { useWaveSurferRecorder } from '../hooks/useWaveformRecorder'
+import { useWaveSurferRecorder } from '../hooks/waveformRecorderContext'
 import { ActionButton } from '@/components/command-input/CommandForm'
 
 export const RecorderDemo = () => {
