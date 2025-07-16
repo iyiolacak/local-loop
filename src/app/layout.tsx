@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { VoiceRecorderProvider } from "./hooks/waveformRecorderContext";
 
 export const metadata: Metadata = {
   title: "Locally Loop | Productivity at Localhost",
@@ -16,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`antialiased font-sans`}>
-        <VoiceRecorderProvider>
         <TooltipProvider>{children}</TooltipProvider>
-        </VoiceRecorderProvider>
       </body>
     </html>
   );

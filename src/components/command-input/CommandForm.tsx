@@ -13,66 +13,59 @@ import { useCommandForm } from "./useCommandForm";
  */
 export const CommandForm: React.FC<CommandFormProps> = (props) => {
   const {
-    /** text */
     text,
     setText,
     hasText,
     placeholder,
-
-    /** recorder */
-    isRecording,
-    progress,
-    status,
-    startRecording,
-    stopRecording,
-    destroyRecording,
-
-    /** ui */
     tooltipMain,
     handleSubmit,
-    waveSurferRef,
+    visualizerRef,
+    recorder,
+    handleStopRecording,
   } = useCommandForm(props);
 
-  /** Format progress → mm:ss */
   const mmss = React.useMemo(() => {
-    if (!isRecording) return "00:00";
-    return new Date(progress).toISOString().substring(14, 19);
-  }, [progress, isRecording]);
+    if (!recorder.isRecording) return null;
+    return new Date(recorder.progress).toISOString().substring(14, 19);
+  }, [recorder.progress, recorder.isRecording]);
 
   return (
-      <div className="relative flex w-full bg-background md:max-w-2xl">
-        {/* Optional WaveSurfer visualisation */}
-        {isRecording && (
-          <div
-            ref={waveSurferRef as React.RefObject<HTMLDivElement>}
-            className="absolute left-2 top-2 h-10 w-10 rounded-md border bg-red-600/40"
-          />
-        )}
+    <div className="relative flex w-full bg-background md:max-w-2xl">
+      {/* 
+        The visualizer div. The ref is attached here.
+        It's always in the DOM, making the ref stable.
+        We use CSS to show/hide it.
+      */}
+      <div
+        ref={visualizerRef}
+        className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-300"
+        style={{ opacity: recorder.isRecording ? 1 : 0 }}
+      />
 
-        {/* Textarea */}
-        <CommandTextarea
-          value={text}
-          isRecording={isRecording}
-          onChange={(e) => setText(e.target.value)}
-          onSubmit={handleSubmit}
-          placeholder={isRecording ? "" : placeholder}
-          className="relative z-10 pr-20 dark:pr-20"
-        />
+      {/* Textarea */}
+      <CommandTextarea
+        value={text}
+        isRecording={recorder.isRecording}
+        onChange={(e) => setText(e.target.value)}
+        onSubmit={handleSubmit}
+        placeholder={recorder.isRecording ? "" : placeholder}
+        className="relative z-10 dark:max-h-30 pr-20 dark:pr-20"
+      />
 
-        {/* Primary Action */}
-        <ActionButton
-          hasText={hasText}
-          tooltipMain={tooltipMain}
-          onSend={handleSubmit}
-          isRecording={isRecording}
-          startRecording={startRecording}
-          stopRecording={stopRecording}
-          destroyRecording={destroyRecording}
-          status={status as string}
-          mmss={mmss}
-          onMouseEnter={preloadWaveSurfer}
-          onTouchStart={preloadWaveSurfer}
-        />
-      </div>
+      {/* Primary Action */}
+      <ActionButton
+        hasText={hasText}
+        tooltipMain={tooltipMain}
+        onSend={handleSubmit}
+        isRecording={recorder.isRecording}
+        startRecording={recorder.start}
+        stopRecording={() => handleStopRecording(true)} // Stop and save
+        destroyRecording={() => handleStopRecording(false)} // Stop and discard
+        status={typeof recorder.status === "string" ? recorder.status : "error"}
+        mmss={mmss || ""}
+        onMouseEnter={preloadWaveSurfer}
+        onTouchStart={preloadWaveSurfer}
+      />
+    </div>
   );
 };

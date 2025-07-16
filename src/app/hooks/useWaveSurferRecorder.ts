@@ -1,159 +1,115 @@
-import { preloadWaveSurfer } from '@/components/command-input/lazyWavesurfer'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { preloadWaveSurfer } from '@/components/command-input/lazyWavesurfer';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type WaveSurfer from 'wavesurfer.js';
+import type RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
 
-/* -------------------------------------------------------------------------- */
-/* Types                                                                      */
-/* -------------------------------------------------------------------------- */
 export interface RecorderOptions {
-  /* WaveSurfer container (HTMLElement or selector) */
-  container: HTMLElement | string
-  /* Visual tweaks (safe defaults) */
-  waveColor?            : string
-  progressColor?        : string
-  /* Record-plugin options we want to expose */
-  scrollingWaveform?    : boolean
-  continuousWaveform?   : boolean
-  continuousWaveformDuration?: number
+  container: HTMLElement | null; // Can be null initially
+  waveColor?: string;
+  progressColor?: string;
+  scrollingWaveform?: boolean;
+  continuousWaveform?: boolean;
 }
 
 export interface RecorderApi {
-  /* imperative commands */
-  start                : (deviceId?: string) => Promise<void>
-  stop                 : () => Promise<Blob | undefined>
-  pause                : () => void
-  resume               : () => void
-  destroy              : () => void
-  /* reactive state */
-  status               : 'idle' | 'loading' | 'ready' | { error: unknown }
-  isRecording          : boolean
-  isPaused             : boolean
-  progress             : number          // ms
-  url?                 : string
-  /* escape hatch */
-  instance?            : import('wavesurfer.js').default | null
+  start: (deviceId?: string) => Promise<void>;
+  stop: () => Promise<Blob | undefined>;
+  pause: () => void;
+  resume: () => void;
+  status: 'idle' | 'loading' | 'ready' | { error: unknown };
+  isRecording: boolean;
+  isPaused: boolean;
+  progress: number; // in ms
+  url?: string;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Hook                                                                       */
-/* -------------------------------------------------------------------------- */
 export function useWaveSurferRecorder({
   container,
-  waveColor             = 'rgb(200,0,200)',
-  progressColor         = 'rgb(100,0,100)',
-  scrollingWaveform     = false,
-  continuousWaveform    = true,
-  continuousWaveformDuration = 30,
+  waveColor = '#00e701', // Using the --product color from your CSS
+  progressColor = 'rgba(0, 231, 1, 0.5)',
+  scrollingWaveform = true,
+  continuousWaveform = true,
 }: RecorderOptions): RecorderApi {
-  const [status     , setStatus     ] = useState<
-    'idle' | 'loading' | 'ready' | { error: unknown }
-  >('idle')
-  const [isRecording, setIsRecording] = useState(false)
-  const [isPaused   , setIsPaused   ] = useState(false)
-  const [progress   , setProgress   ] = useState(0)            // ms
-  const [url        , setUrl        ] = useState<string>()
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | { error: unknown }>('idle');
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [url, setUrl] = useState<string>();
 
-  /* 3rd-party refs kept outside React diff cycle */
-  const waveSurferRef = useRef<import('wavesurfer.js').default | null>(null)
-  const recorderRef   = useRef<any>(null)        // RecordPlugin’s TS defs lag behind
+  const waveSurferRef = useRef<WaveSurfer | null>(null);
+  const recorderRef = useRef<RecordPlugin | null>(null);
 
-  /* ---------------------------------------------------------------------- */
-  /* Ensure the libs are loaded + the instances exist                       */
-  /* ---------------------------------------------------------------------- */
-  const ensureReady = useCallback(async () => {
-    if (status === 'ready') return
-    if (status === 'loading') {
-      await preloadWaveSurfer()                 // wait for whoever started loading
-      return
-    }
+  useEffect(() => {
+    if (!container) return;
 
-    try {
-      setStatus('loading')
-      const { WaveSurfer, RecordPlugin } = await preloadWaveSurfer()
+    let isCancelled = false;
+    setStatus('loading');
 
-      /* Tear down any previous instance – e.g., if caller changed options   */
-      waveSurferRef.current?.destroy()
+    preloadWaveSurfer().then(({ WaveSurfer, RecordPlugin }) => {
+      if (isCancelled) return;
 
+      waveSurferRef.current?.destroy();
       waveSurferRef.current = WaveSurfer.create({
         container,
         waveColor,
         progressColor,
-      })
+        height: 48,
+        barWidth: 3,
+        barGap: 2,
+        barRadius: 2,
+      });
 
-      recorderRef.current = waveSurferRef.current?.registerPlugin(
-        RecordPlugin.create({
-          renderRecordedAudio      : false,
-          scrollingWaveform,
-          continuousWaveform,
-          continuousWaveformDuration,
-        }),
-      )
+      recorderRef.current = waveSurferRef.current.registerPlugin(
+        RecordPlugin.create({ renderRecordedAudio: false, scrollingWaveform, continuousWaveform })
+      );
 
-      /* Events ----------------------------------------------------------- */
-      recorderRef.current.on('record-progress', (t: number) => setProgress(t))
-
+      recorderRef.current.on('record-progress', (time: number) => setProgress(time));
       recorderRef.current.on('record-end', (blob: Blob) => {
-        setUrl(URL.createObjectURL(blob))
-        setIsRecording(false)
-        setIsPaused(false)
-        setProgress(0)
-      })
+        const newUrl = URL.createObjectURL(blob);
+        setUrl(newUrl);
+        setIsRecording(false);
+        setIsPaused(false);
+        setProgress(0);
+      });
 
-      setStatus('ready')
-    } catch (err) {
-      setStatus({ error: err })
-      console.error('[useWaveSurferRecorder] load error →', err)
-    }
-  }, [
-    status,
-    container,
-    waveColor,
-    progressColor,
-    scrollingWaveform,
-    continuousWaveform,
-    continuousWaveformDuration,
-  ])
+      setStatus('ready');
+    }).catch(err => {
+      console.error('[useWaveSurferRecorder] load error →', err);
+      setStatus({ error: err });
+    });
 
-  /* ---------------------------------------------------------------------- */
-  /* Public API                                                             */
-  /* ---------------------------------------------------------------------- */
+    return () => {
+      isCancelled = true;
+      waveSurferRef.current?.destroy();
+    };
+  }, [container, waveColor, progressColor, scrollingWaveform, continuousWaveform]);
+
   const start = useCallback(async (deviceId?: string) => {
-    await ensureReady()
-    await recorderRef.current?.startRecording({ deviceId })
-    setIsRecording(true)
-    setIsPaused(false)
-    setUrl(undefined)
-  }, [ensureReady])
+    if (recorderRef.current && status === 'ready') {
+      await recorderRef.current.startRecording({ deviceId });
+      setIsRecording(true);
+      setIsPaused(false);
+      setUrl(undefined);
+    }
+  }, [status]);
 
   const stop = useCallback(async () => {
-    if (!recorderRef.current) return
-    const blob: Blob | undefined = await recorderRef.current.stopRecording()
-    return blob
-  }, [])
+    return recorderRef.current?.stopRecording();
+  }, []);
 
-  const pause  = useCallback(() => {
-    recorderRef.current?.pauseRecording()
-    setIsPaused(true)
-  }, [])
+  const pause = useCallback(() => {
+    if (recorderRef.current?.isRecording()) {
+      recorderRef.current.pauseRecording();
+      setIsPaused(true);
+    }
+  }, []);
 
   const resume = useCallback(() => {
-    recorderRef.current?.resumeRecording()
-    setIsPaused(false)
-  }, [])
+    if (recorderRef.current?.isPaused()) {
+      recorderRef.current.resumeRecording();
+      setIsPaused(false);
+    }
+  }, []);
 
-  const destroy = useCallback(() => {
-    waveSurferRef.current?.destroy()
-    waveSurferRef.current = null
-  }, [])
-
-  /* Clean up on unmount --------------------------------------------------- */
-  useEffect(() => destroy, [destroy])
-
-  return {
-    /* imperative */
-    start, stop, pause, resume, destroy,
-    /* reactive   */
-    status, isRecording, isPaused, progress, url,
-    /* low-level  */
-    instance: waveSurferRef.current,
-  }
+  return { start, stop, pause, resume, status, isRecording, isPaused, progress, url };
 }

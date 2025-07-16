@@ -35,7 +35,7 @@ export const CommandTextarea = React.forwardRef<
     onSubmit,
     autoResize = true,
     className,
-    voiceRecording,
+    isRecording,
     ...rest
   } = props;
 
@@ -143,7 +143,7 @@ export const CommandTextarea = React.forwardRef<
       `,
         {
           "dark:text-input-dark placeholder:text-input-dark cursor-default":
-            voiceRecording,
+            isRecording,
         }
       )}
       style={{ minHeight: "40px" }}
