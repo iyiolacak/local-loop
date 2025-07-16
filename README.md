@@ -158,3 +158,4 @@ The model returns one of the function calls, which the client handles and update
 MIT © iyiolacak
 
 *With Local Loop, every word you throw is a tracked and encouraged further progress. No lists. No distractions. Just flow.*
+

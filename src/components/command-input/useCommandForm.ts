@@ -1,6 +1,7 @@
 import { useWaveSurferRecorder } from "@/app/hooks/useWaveSurferRecorder";
-import React from "react";
+import React, { useEffect } from "react";
 import { CommandFormProps } from "./types";
+import { preloadWaveSurfer } from "./lazyWavesurfer";
 
 export function useCommandForm({
   onSubmit,
@@ -10,12 +11,25 @@ export function useCommandForm({
   const hasText = text.trim().length > 0;
 
   // This ref will be attached to the visualizer div in the component
+
+useEffect(() => {
+  // Preload WaveSurfer.js when this hook is used
+  preloadWaveSurfer();
+  
   const visualizerRef = React.useRef<HTMLDivElement>(null);
 
   // The recorder is fully self-contained within this component's logic
   const recorder = useWaveSurferRecorder({
     container: visualizerRef.current,
   });
+
+  return () => {
+    // Cleanup the recorder when the component unmounts
+    recorder.destroy();
+  };
+}, []);
+
+
 
   const handleSubmit = React.useCallback(() => {
     const trimmedText = text.trim();
