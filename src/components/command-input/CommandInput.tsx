@@ -142,9 +142,13 @@ export const CommandTextarea = React.forwardRef<
         ${className}
       `,
         {
-          "dark:text-input-dark placeholder:text-input-dark cursor-default":
+          // --- THIS IS THE FIX ---
+          // When recording, make the textarea's background, text, and placeholder
+          // transparent. This makes the component "see-through" to the
+          // visualizer div sitting behind it.
+          "dark:text-transparent placeholder:text-transparent cursor-default":
             isRecording,
-        }
+                  }
       )}
       style={{ minHeight: "40px" }}
       {...rest}

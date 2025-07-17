@@ -38,7 +38,7 @@ export const CommandForm: React.FC<CommandFormProps> = (props) => {
       */}
       <div
         ref={visualizerRef}
-        className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-300"
+        className="absolute overflow-hidden top-1 w-1/2 md:w-3/4 inset-0 z-30 pointer-events-none transition-opacity duration-300"
         style={{ opacity: recorder.isRecording ? 1 : 0 }}
       />
 

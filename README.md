@@ -1,41 +1,38 @@
-# Local Loop | Productivity at Localhost
+# Locally Loop | Productivity at Localhost
 
 A **local-first**, **frictionless**, gamified productivity tool. From intention to impact in a single line and no plans, no pause, just progress.
 
-Drop the chore of to-do lists **Inspired by the flow state and reward loops of gaming (e.g., League of Legends)**, Local Loop requires **zero task maintenance**, you simply type what you did or want to do, hit Enter, and get instant XP and feedback.
+Drop the chore of to-do lists **Inspired by the flow state and reward loops of gaming (e.g., League of Legends)**, Locally Loop requires **zero task maintenance**, you simply type what you did or want to do, hit Enter, and get instant XP and feedback.
 <img width="1477" height="255" alt="image" src="https://github.com/user-attachments/assets/14c2aaba-7164-474c-a990-6217d9c918bf" />
 
-Local Loop lives right in your browser(CLI soon). No backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did("fed my car")
+Locally Loop lives right in your browser(CLI soon). No backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did("fed my car")
 ---
 
 ## 🎯 Key Features
 
 * **Ambient Input Bar**: A single persistent input field; no to-do lists, no multi-step forms.
 * **Instant Logging & Completion**: Type in natural language to **create** or **complete** tasks with one keystroke.
-* **Ephemeral Feedback**: Micro-animations and toasts flash (300–500ms) to reward actions without breaking flow.
+* **Ephemeral Feedback**: Micro-animations and toasts flash to reward actions without breaking flow.
 * **LLM-Driven Logic**: The model handles intent detection, state transitions, and summary generation via function calls.
-* **Local-First & Private**: All data is stored in-browser (localStorage/IndexedDB) via Zustand; nothing is sent externally.
+* **Local-First & Private**: All data is stored in-browser (localStorage/IndexedDB); nothing is sent externally*.
 * **Session Summaries & Evolution**: On-demand recaps and growth narratives powered by LLM functions.
 * **Modular Architecture**: React + TypeScript + Tailwind CSS, with clean separation of UI, hooks/services, and state.
 
+*: Although Locally Loop is fully local in storage and architecture, it leverages an external LLM endpoint to interpret inputs, generate rewards, and craft summaries. Treat it like ChatGPT: your inputs are sent to a language model service, but no persistent account data, telemetry, or analytics are ever transmitted.
+
 ---
 
-## 📦 Installation
-
-Requires Node.js 18+ and npm.
+## Quick Start
 
 ```bash
-# Clone the repo
+# Prerequisites: Node.js 18+
 git clone https://github.com/iyiolacak/local-loop.git
 cd local-loop
-
-# Install dependencies
-npm install
-
-# Start development server\ nnpm run dev
+npm i
+npm run dev
 ```
 
-Open `http://localhost:3000` in your browser. The app runs entirely in your browser—no backend required.
+Open [http://localhost:3000](http://localhost:3000) – the entire app runs client‑side; no backend required.
 
 ---
 
@@ -155,7 +152,6 @@ The model returns one of the function calls, which the client handles and update
 
 ## 📜 License
 
-MIT © iyiolacak
+GPLv3 © iyiolacak
 
-*With Local Loop, every word you throw is a tracked and encouraged further progress. No lists. No distractions. Just flow.*
-
+*Locally Loop – turn every intention into compounding progress.*

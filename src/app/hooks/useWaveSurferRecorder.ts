@@ -16,6 +16,8 @@ export interface RecorderApi {
   stop: () => Promise<Blob | undefined>;
   pause: () => void;
   resume: () => void;
+  // --- FIX 1: Add destroy to the API ---
+  destroy: () => Promise<void>;
   status: 'idle' | 'loading' | 'ready' | { error: unknown };
   isRecording: boolean;
   isPaused: boolean;
@@ -26,8 +28,8 @@ export interface RecorderApi {
 export function useWaveSurferRecorder({
   container,
   waveColor = '#00e701', // Using the --product color from your CSS
-  progressColor = 'rgba(0, 231, 1, 0.5)',
-  scrollingWaveform = true,
+  progressColor = 'rgba(0, 231, 1, 1)',
+  scrollingWaveform = false,
   continuousWaveform = true,
 }: RecorderOptions): RecorderApi {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | { error: unknown }>('idle');
@@ -83,6 +85,14 @@ export function useWaveSurferRecorder({
       waveSurferRef.current?.destroy();
     };
   }, [container, waveColor, progressColor, scrollingWaveform, continuousWaveform]);
+  
+  useEffect(() => {
+    return () => {
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [url]);
 
   const start = useCallback(async (deviceId?: string) => {
     if (recorderRef.current && status === 'ready') {
@@ -111,5 +121,19 @@ export function useWaveSurferRecorder({
     }
   }, []);
 
-  return { start, stop, pause, resume, status, isRecording, isPaused, progress, url };
+  // --- FIX 2: Implement the destroy function ---
+  const destroy = useCallback(async () => {
+    if (!recorderRef.current) return;
+    
+    // Stop recording, which triggers 'record-end' and sets a URL.
+    await recorderRef.current.stopRecording();
+    
+    // Immediately discard the URL and reset state.
+    setUrl(undefined);
+    setIsRecording(false);
+    setIsPaused(false);
+    setProgress(0);
+  }, []);
+
+  return { start, stop, pause, resume, destroy, status, isRecording, isPaused, progress, url };
 }
