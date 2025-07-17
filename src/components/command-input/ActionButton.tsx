@@ -118,9 +118,9 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
           <TooltipContent
             side="top"
             align="center"
-            className="max-w-[260px] rounded-lg bg-background px-4 py-3 text-sm font-medium text-gray-100 shadow-lg"
+            className="max-w-[260px] px-4 py-3 text-sm font-medium"
           >
-            <p className="mb-1.5 flex items-center gap-x-1.5 font-semibold">
+            <p className="flex mb-1.5 items-center gap-x-0.5 text-md font-medium">
               <Lock strokeWidth={2} /> {tooltipMain}
             </p>
             <p className="text-xs text-muted-foreground">
