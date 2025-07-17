@@ -135,22 +135,18 @@ export const CommandTextarea = React.forwardRef<
         focus:border-product focus:ring-1 focus:ring-product
         resize-none py-3 px-3 pr-12 overflow-hidden
         dark:text-lg md:dark:text-xl dark:font-medium
-        !h-14 dark:max-h-40 overflow-y-auto
+        !h-14 min-h-14 dark:max-h-40 overflow-y-auto
         transition-all duration-200 ease-out
 
         focus:outline-none focus-visible:ring-2 focus-visible:ring-product
         ${className}
       `,
         {
-          // --- THIS IS THE FIX ---
-          // When recording, make the textarea's background, text, and placeholder
-          // transparent. This makes the component "see-through" to the
-          // visualizer div sitting behind it.
-          "dark:text-transparent placeholder:text-transparent cursor-default":
-            isRecording,
-                  }
+          // When recording, make input feel "disabled" to focus on voice
+          "text-transparent placeholder:text-gray-600 cursor-default focus:text-transparent": isRecording,
+        
+        }
       )}
-      style={{ minHeight: "40px" }}
       {...rest}
     />
   );

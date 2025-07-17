@@ -1,7 +1,7 @@
-import { useWaveSurferRecorder } from "@/app/hooks/useWaveSurferRecorder";
-import React, { useCallback, useEffect, useState } from "react";
+// src/components/command-input/useCommandForm.ts
+import { useVoiceRecorder } from "@/app/hooks/useVoiceRecorder";
+import { useCallback, useState } from "react";
 import { CommandFormProps } from "./types";
-import { preloadWaveSurfer } from "./lazyWavesurfer";
 
 export function useCommandForm({
   onSubmit,
@@ -10,28 +10,15 @@ export function useCommandForm({
   const [text, setText] = useState("");
   const hasText = text.trim().length > 0;
 
-  // --- START OF FIX ---
-  // 1. Create state to hold the DOM node for the visualizer.
-  const [visualizerContainer, setVisualizerContainer] = useState<HTMLDivElement | null>(null);
-
-  // 2. Create a "callback ref". React calls this function with the DOM node
-  //    when the ref is attached. We then save that node to our state.
-  const visualizerRef = useCallback((node: HTMLDivElement) => {
-    if (node !== null) {
-      setVisualizerContainer(node);
-    }
-  }, []); // Empty array ensures this callback is stable.
-
-  // 3. Pass the stateful container to the recorder hook.
-  //    This hook will now re-run when visualizerContainer changes from null to a real element.
-  const recorder = useWaveSurferRecorder({
-    container: visualizerContainer,
+  const recorder = useVoiceRecorder({
+    onStop: (audioBlob) => {
+      // In a real application, you would send this blob to a speech-to-text API.
+      // For now, we'll log it and create a playable URL for debugging.
+      console.log("Recording stopped, blob created:", audioBlob);
+      const url = URL.createObjectURL(audioBlob);
+      console.log("Playable URL (can be opened in a new tab):", url);
+    },
   });
-  // --- END OF FIX ---
-
-  useEffect(() => {
-    preloadWaveSurfer();
-  }, []);
 
   const handleSubmit = useCallback(() => {
     const trimmedText = text.trim();
@@ -43,16 +30,8 @@ export function useCommandForm({
   const tooltipMain = hasText
     ? "Send to assistant"
     : recorder.isRecording
-    ? "Stop recording"
+    ? "Recording your voice..."
     : "Record a voice note";
-
-  const handleStopRecording = (save: boolean) => {
-    if (save) {
-      recorder.stop();
-    } else {
-      recorder.destroy();
-    }
-  };
 
   return {
     text,
@@ -61,8 +40,6 @@ export function useCommandForm({
     tooltipMain,
     handleSubmit,
     placeholder,
-    visualizerRef, // We still pass the ref down to the component
     recorder,
-    handleStopRecording,
   };
 }
