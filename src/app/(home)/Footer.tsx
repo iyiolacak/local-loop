@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="*:font-regular flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
           <span>© 2025 Locally Loop</span>
           <span>
-            <a href="./LICENSE" className="underline hover:text-primary transition-colors">
+            <a href="https://github.com/iyiolacak/local-loop/blob/main/LICENSE" className="underline hover:text-primary transition-colors">
               GPLv3 License
             </a>{' '}
             · @<span className="font-medium text-foreground"><Link href={"https://github.com/iyiolacak/"}>iyiolacak</Link></span>
