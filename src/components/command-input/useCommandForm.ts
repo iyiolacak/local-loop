@@ -27,12 +27,11 @@ export function useCommandForm({
     setText("");
   }, [text, onSubmit]);
 
-  const tooltipMain = hasText
-    ? "Send to assistant"
-    : recorder.isRecording
-    ? "Recording your voice..."
-    : "Record a voice note";
-
+const tooltipMain = hasText
+  ? "Send privately to model*"
+  : recorder.isRecording
+  ? "Recording... saved locally*"
+  : "Record a private voice note*";
   return {
     text,
     setText,

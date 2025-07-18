@@ -1,7 +1,11 @@
 // src/components/command-input/ActionButton.tsx
 import { cn } from "@/lib/utils";
 import React from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "../ui/button";
 import { Microphone, Send } from "iconoir-react/solid";
 import { ArrowUp, Lock, Trash } from "iconoir-react/regular";
@@ -66,14 +70,19 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
                   <Trash strokeWidth={2} className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><p>Cancel Recording</p></TooltipContent>
+              <TooltipContent side="bottom">
+                <p>Cancel Recording</p>
+              </TooltipContent>
             </Tooltip>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Primary Button: Always visible, morphs based on state */}
-      <motion.div layout transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}>
+      <motion.div
+        layout
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      >
         <Tooltip delayDuration={150}>
           <TooltipTrigger asChild>
             <motion.button
@@ -124,8 +133,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
               <Lock strokeWidth={2} /> {tooltipMain}
             </p>
             <p className="text-xs text-muted-foreground">
-              *Routed only to the OpenAI ChatGPT API you already use. Everything
-              else stays on your device.
+              *Processed by your chosen model.<br/>All else stays in-browser.{" "}
             </p>
           </TooltipContent>
         </Tooltip>

@@ -1,13 +1,21 @@
-'use client';
+"use client";
+import Footer from "./Footer";
+import Header from "./Header";
 
-import { useLiteMode } from "@/app/hooks/useLiteMode";
-
-
-export default function Page({children}: {children: React.ReactNode}) {
-  useLiteMode();
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className='w-full h-full'>
-      <div className='h-full w-full'>{children}</div>
+    <div className="min-h-screen flex flex-col">
+      {/* ---------- Header ---------- */}
+      <Header />
+      {/* ---------- Main ---------- */}
+      <main className="flex-1 h-screen p-6 overflow-y-auto">{children}</main>
+
+      {/* ---------- Footer ---------- */}
+      <Footer />
     </div>
   );
 }

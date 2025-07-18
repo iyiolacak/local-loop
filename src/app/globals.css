@@ -166,7 +166,7 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: #231b1b;
-  --input-dark: #1e1f21;
+  --input-dark: #262729;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -237,6 +237,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    @apply selection:bg-ring/20 selection:text-foreground;
   }
   body {
     @apply bg-background text-foreground;
