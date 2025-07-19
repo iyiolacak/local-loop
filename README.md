@@ -36,37 +36,6 @@ Open [http://localhost:3000](http://localhost:3000) – the entire app runs clie
 
 ---
 
-## 🏗️ Architecture Overview
-
-```
-+------------------+      +--------------------+
-|  UI Components   |      |    Services/Hooks  |
-|------------------|      |--------------------|
-| - AppShell       |<---->| - llmClient        |
-| - AmbientInputBar|      | - useIntentParser  |
-| - ToastManager   |      | - useRewardEngine  |
-| - OverlayContainer|     | - useOverlayHooks  |
-+------------------+      +--------------------+
-        |                           |
-        v                           v
-+------------------------------------------+
-|            State Layer (Zustand)         |
-|------------------------------------------|
-| session: { entries[], startTime, isActive}
-| history: [{…session}]                    |
-| actions: addEntry, removeEntry, start/end|
-+------------------------------------------+
-```
-
-### Component Breakdown
-
-* **AppShell**: Initializes global listeners (hotkeys) and renders core components.
-* **AmbientInputBar**: Captures user text input and submits for processing.
-* **ToastManager**: Renders ephemeral toasts for immediate feedback.
-* **OverlayContainer**: Hosts off-screen overlays: Session Summary, Evolution, Journal, Pre-Quest Lobby.
-
----
-
 ## 🖥️ Usage
 
 1. **Log or Complete**
@@ -92,21 +61,6 @@ Open [http://localhost:3000](http://localhost:3000) – the entire app runs clie
 4. **Persisting Data**
 
    * All session entries and history are automatically persisted using Zustand's `persist` middleware in your browser’s localStorage.
-
----
-
-## ⚙️ Configuration
-
-Optional config in `~/.config/productivity-localhost/config.yaml`:
-
-```yaml
-userName: "Your Name"
-apppearance:
-  theme: "light" # or "dark"
-affirmationStyle: "motivational" # or "reflective"
-```
-
-If the file is missing, defaults will be used.
 
 ---
 
@@ -137,7 +91,7 @@ The model returns one of the function calls, which the client handles and update
 
 * **Eliminate Friction:** Traditional TODO apps trap you in lists and upkeep. Here, you **only type**.
 * **Protect Flow:** No modals, dashboards, or clicks—just an ambient bar & micro-feedback.
-* **Maximize Motivation:** Instant XP, rare loot bursts (10% chance), and reflective narratives drive dopamine loops.
+* **Maximize Motivation:** Instant XP, rare loot bursts, and reflective narratives drive dopamine loops.
 * **Local & Private:** Your data never leaves your browser. No accounts or telemetry.
 
 ---
