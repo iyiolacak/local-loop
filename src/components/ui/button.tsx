@@ -3,7 +3,8 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { useHoverSound } from "@/app/hooks/useHoverSound"
+// Import the unified useHoverClickSounds hook from your SFX library
+import { useHoverClickSounds } from "@/lib/sfx"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -40,7 +41,7 @@ export interface ButtonProps
   extends React.ComponentProps<"button">,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  hoverSoundUrl?: string;
+  // Removed hoverSoundUrl as useHoverClickSounds handles fixed URLs
 }
 
 export function Button({
@@ -48,24 +49,27 @@ export function Button({
   variant,
   size,
   asChild = false,
-  hoverSoundUrl,
+  // Removed hoverSoundUrl from destructuring
   onMouseEnter,
+  onClick,
   ...props
 }: ButtonProps) {
-  const Comp      = asChild ? Slot : "button";
-  const playHover = useHoverSound({
-    url: hoverSoundUrl,
-    volume: 1,
-    cooldownMs: 150,
-  });
+  const Comp = asChild ? Slot : "button";
+  
+  // Use the unified hook
+  const sfx = useHoverClickSounds(); 
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       onMouseEnter={(e) => {
-        playHover();
-        onMouseEnter?.(e);
+        sfx.onMouseEnter(); // Play hover sound
+        onMouseEnter?.(e); // Call original onMouseEnter prop
+      }}
+      onClick={(e) => {
+        sfx.onClick(); // Play click sound
+        onClick?.(e); // Call original onClick prop
       }}
       {...props}
     />

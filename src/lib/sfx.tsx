@@ -14,6 +14,8 @@ import useSound from "use-sound"
 export const SFX_MAP = {
   hover:  { src: "/sfx/button_hover.mp3", volume: 0.40 },
   click:  { src: "/sfx/button_click.mp3", volume: 0.55 },
+  popup:  { src: "/sfx/pop_up.mp3", volume: 0.40 },
+
 } as const
 
 type SfxKey = keyof typeof SFX_MAP
@@ -51,6 +53,7 @@ export function SfxProvider({ children }: { children: React.ReactNode }) {
       return next
     })
   }, [])
+  
 
   /* 2.  Pre‑decode every SFX exactly once ------------------------- */
   const howlsRef = React.useRef<Record<SfxKey, Howl> | null>(null)
@@ -107,7 +110,7 @@ export function useHoverClickSounds(): {
 } {
   const { play } = useSfx()
   return {
-    onMouseEnter: () => play("hover"),
+    onMouseEnter: () => play("popup"),
     onClick: () => play("click"),
   }
 }

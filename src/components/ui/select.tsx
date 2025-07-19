@@ -18,7 +18,7 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useHoverClickSounds, useSfx } from "@/lib/sfx"
-import { NavArrowDown, NavArrowUp } from "iconoir-react/solid"
+import { NavArrowDown } from "iconoir-react/solid"
 
 /* ------------------------------------------------------------------
  *  ROOT + SIMPLE SUB‑COMPONENTS

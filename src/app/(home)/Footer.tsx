@@ -1,3 +1,5 @@
+import ToggleSound from '@/components/ToggleSound'
+import { Settings } from 'iconoir-react/regular'
 import Link from 'next/link'
 import React from 'react'
 
@@ -25,6 +27,11 @@ const Footer = () => {
           <a href="./LICENSE" className="underline hover:text-primary transition-colors">
             License
           </a>
+                    <Link passHref href="/settings" className="underline hover:text-primary transition-colors">
+            <Settings/>
+          </Link>
+          <ToggleSound />
+
         </nav>
       </div>
     </footer>

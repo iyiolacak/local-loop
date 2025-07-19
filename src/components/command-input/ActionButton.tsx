@@ -10,6 +10,8 @@ import { Button } from "../ui/button";
 import { Microphone, Send } from "iconoir-react/solid";
 import { ArrowUp, Lock, Trash } from "iconoir-react/regular";
 import { AnimatePresence, motion } from "framer-motion";
+// Import your SFX hooks
+import { useHoverClickSounds } from "@/lib/sfx";
 
 interface ActionButtonProps {
   hasText: boolean;
@@ -36,12 +38,21 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   const PrimaryIcon = isRecording ? Send : hasText ? ArrowUp : Microphone;
   const primaryIconKey = isRecording ? "stop" : hasText ? "send" : "mic";
 
+  // Initialize the hover and click sound hooks
+  const sfx = useHoverClickSounds();
+
   const handlePrimaryAction = () => {
     if (isRecording) {
+      // For stopping recording, we want a 'click' sound, not necessarily tied to a specific Radix state change.
+      // We can trigger it here directly or rely on the underlying component's click handler.
+      // For this custom button, we'll trigger it explicitly.
+      sfx.onClick(); // Play click sound
       stopRecording(true); // Stop and Save
     } else if (hasText) {
+      sfx.onClick(); // Play click sound
       onSend();
     } else {
+      sfx.onClick(); // Play click sound
       startRecording();
     }
   };
@@ -60,6 +71,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
           >
             <Tooltip delayDuration={150}>
               <TooltipTrigger asChild>
+                {/* This Button component should already have SFX integrated */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -87,10 +99,12 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
           <TooltipTrigger asChild>
             <motion.button
               onClick={handlePrimaryAction}
+              onMouseEnter={sfx.onMouseEnter} // Add hover sound
+              // We've moved the sfx.onClick() call into handlePrimaryAction
               disabled={status !== "idle" && !isRecording}
               aria-label={tooltipMain}
               className={cn(
-                "group relative flex h-10 items-center justify-center rounded-lg bg-product p-0 text-xl text-background shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-product/90 active:scale-95"
+                "group relative cursor-pointer flex h-10 items-center justify-center rounded-lg bg-product p-0 text-xl text-background shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-product/90 active:scale-95"
               )}
               animate={{ width: hasText && !isRecording ? "5rem" : "3.5rem" }} // 80px or 56px
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
