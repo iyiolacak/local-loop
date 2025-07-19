@@ -26,7 +26,7 @@ function Switch({
       }}
       // Apply SFX for click/state change
       onCheckedChange={(checked) => {
-        play("click") // Play click sound when the switch state changes
+        play("switch_2") // Play click sound when the switch state changes
         onCheckedChange?.(checked) // Call original prop if it exists
       }}
       className={cn(

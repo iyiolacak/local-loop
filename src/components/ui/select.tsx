@@ -90,8 +90,8 @@ const SelectTrigger = React.forwardRef<
         focus-visible:border-ring focus-visible:ring-ring/50 \
         aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 \
         aria-invalid:border-destructive dark:bg-input-dark transition-color dark:hover:text-background dark:hover:bg-product \
-        relative z-10 flex w-fit items-center justify-between gap-2 \
-        rounded-md border-none bg-transparent px-4 py-3 text-lg whitespace-nowrap \
+        relative flex w-fit items-center justify-between gap-2 \
+        rounded-md border-none bg-transparent px-4 py-3 dark:text-lg whitespace-nowrap \
         shadow-xs transition-[color,box-shadow,border-radius] outline-none \
         focus-visible:ring-[3px] \
         cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 \
@@ -127,7 +127,7 @@ function SelectContent(
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "bg-input-dark text-white \
+          "bg-input-dark ring ring-ring/20 text-white \
           data-[state=open]:animate-in data-[state=closed]:animate-out \
           data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 \
           data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 \

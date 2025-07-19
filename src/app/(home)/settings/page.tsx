@@ -1,10 +1,5 @@
 "use client";
 
-// Privacy & Transparency Settings Page (v3)
-// -----------------------------------------
-// Typography bump: larger font sizes and relaxed line‑height for easier reading.
-// (Based on Nielsen‑Norman readability guidelines.)
-
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -34,209 +29,140 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Lock } from "iconoir-react/regular";
 
-// localStorage helpers ------------------------------------------------
-const LS_KEY = "ll:userPrefs" as const; // Specific key for user preferences
+// ---------------------------------------------------------------------------
+// Local Storage Key & Default Preferences
+// ---------------------------------------------------------------------------
+const LS_KEY = "ll:userPrefs" as const;
 interface UserPrefs {
-  model: string;
+  model: "openai" | "selfHosted";
   saveVoice: boolean;
   shareDiagnostics: boolean;
 }
 const DEFAULT_PREFS: UserPrefs = {
-  model: "OpenAI GPT‑4o",
-  saveVoice: true,
+  model: "openai",
+  saveVoice: false,
   shareDiagnostics: false,
 };
 
 const loadPrefs = (): UserPrefs => {
-  if (typeof window === "undefined") return DEFAULT_PREFS; // Ensure client-side only
+  if (typeof window === "undefined") return DEFAULT_PREFS;
   try {
     const raw = localStorage.getItem(LS_KEY);
-    // Merge loaded prefs with defaults to ensure all keys are present
     return raw ? { ...DEFAULT_PREFS, ...JSON.parse(raw) } : DEFAULT_PREFS;
-  } catch (error) {
-    console.error("Failed to load preferences from localStorage:", error);
-    return DEFAULT_PREFS; // Return defaults on error
+  } catch {
+    return DEFAULT_PREFS;
   }
 };
 
 const savePrefs = (prefs: UserPrefs) => {
-  if (typeof window === "undefined") return; // Ensure client-side only
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(prefs));
-  } catch (error) {
-    console.error("Failed to save preferences to localStorage:", error);
-  }
+  } catch {}
 };
 
 export default function PrivacySettings() {
-  // Initialize state by trying to load from localStorage immediately on client-side.
-  // This avoids a flicker where DEFAULT_PREFS are shown before useEffect updates.
-  const [prefs, setPrefs] = useState<UserPrefs>(() => loadPrefs());
+  const [prefs, setPrefs] = useState<UserPrefs>(loadPrefs);
   const [confirmReset, setConfirmReset] = useState(false);
 
-  // Debounce saving preferences to localStorage whenever `prefs` change
+  // Auto-save preferences with a slight debounce
   useEffect(() => {
-    const id = setTimeout(() => savePrefs(prefs), 150);
-    return () => clearTimeout(id); // Cleanup on unmount or re-render
+    const id = setTimeout(() => savePrefs(prefs), 200);
+    return () => clearTimeout(id);
   }, [prefs]);
 
-  // Handler for the reset action
   const handleReset = () => {
-    if (typeof window === 'undefined') return; // Ensure client-side operation
+    if (typeof window === "undefined") return;
     try {
-      localStorage.removeItem(LS_KEY); // Crucial: Only remove our specific key, not everything
-      setPrefs(DEFAULT_PREFS); // Immediately update UI to default state
-      setConfirmReset(false); // Close the dialog
-      // A small delay for visual feedback, then hard reload for a fresh application state
-      setTimeout(() => window.location.reload(), 300);
-    } catch (error) {
-      console.error("Failed to reset Local Loop preferences:", error);
-      // Optionally, display an error message to the user
-    }
+      localStorage.removeItem(LS_KEY);
+      setPrefs(DEFAULT_PREFS);
+      setConfirmReset(false);
+      setTimeout(() => window.location.reload(), 200);
+    } catch {}
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-8 p-6 md:p-12"> {/* Reduced vertical spacing */}
-      <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-        Privacy & Transparency
-      </h1>
-      <p className="mt-4 max-w-prose text-lg leading-relaxed text-muted-foreground"> {/* Standardized text-lg */}
-        Locally Loop executes <span className="font-semibold">100%</span> in your browser. We transmit
-        <em> only the input and minimal context you provide</em> to your chosen
-        model for a reply. No accounts, no hidden sync.
-      </p>
+    <div className="mx-auto max-w-2xl p-6 space-y-10">
+      <div>
+        <h1 className="text-4xl font-bold">Privacy & Transparency</h1>
+        <p className="mt-4 text-lg leading-relaxed text-muted-foreground text-wrap">
+          Locally Loop is a <strong>privacy-first</strong> productivity app. There are <em>no</em> backend
+          servers, accounts, or analytics. All your data, sessions, logs, and audio,<br/>stays &ldquo;on
+          device&rdquo; until you choose to share.<br className="mb-2"/>Only the text you type, plus a minimal context
+          snippet, goes directly from your browser to the LLM provider you select.
+        </p>
+      </div>
 
-      {/* Model Provider ------------------------------------------------*/}
+      {/* Model Provider */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Model Provider</CardTitle> {/* Standardized CardTitle size */}
-          <CardDescription className="leading-relaxed text-sm md:text-base"> {/* Standardized CardDescription */}
-            Decide which model processes your text. The data shown above is the
-            only payload that ever leaves your device.
+          <CardTitle className="text-2xl flex items-center gap-2">
+            <Lock /> Model Provider
+          </CardTitle>
+          <CardDescription className="text-base">
+            Choose where your prompts are processed. Select OpenAI for hosted inference or point to your
+            own self-hosted LLM endpoint to keep everything under your control.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-base"> {/* Standardized Label size */}
-            Provider
-          </p>
           <Select
             value={prefs.model}
-            onValueChange={(v) => setPrefs({ ...prefs, model: v })}
+            onValueChange={(v) =>
+              setPrefs({ ...prefs, model: v as UserPrefs["model"] })
+            }
           >
-            <SelectTrigger id="model" className="mt-3 w-full text-base">
-              <SelectValue placeholder="Select a model" />
+            <SelectTrigger id="model" className="w-full  dark:bg-background text-base">
+              <SelectValue placeholder="Select provider" />
             </SelectTrigger>
-            <SelectContent className="text-base">
-              <SelectItem value="OpenAI GPT‑4o">OpenAI GPT‑4o (default)</SelectItem>
-              <SelectItem value="Anthropic Claude‑3">Anthropic Claude‑3</SelectItem>
-              <SelectItem value="Local LLM (browser)">Local LLM (browser)</SelectItem>
+            <SelectContent>
+              <SelectItem value="openai">OpenAI GPT‑4o</SelectItem>
+              <SelectItem value="selfHosted">Google Gemini 2.5 Flash</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
       </Card>
 
-      {/* Voice Notes ---------------------------------------------------*/}
+      {/* Voice Input */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Voice Notes</CardTitle>
-          <CardDescription className="leading-relaxed text-sm md:text-base">
-            Control what happens to raw audio after transcription.
+          <CardTitle className="text-2xl">Voice Input</CardTitle>
+          <CardDescription className="text-base">
+            Control what happens to raw audio recordings after transcription. On opt-in voice records are stored locally for listening them again later.<br/>If you want to see your records in your timeline(on device), opt it in
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-between gap-4 md:gap-6"> {/* Adjusted responsive gap */}
-          <div className="space-y-1">
-            <p className="font-medium text-base">Keep original audio</p> {/* Standardized text size */}
-            <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
-              Uncheck to auto‑delete audio once transcribed — saves disk, boosts
-              privacy.
-            </p>
-          </div>
+        <CardContent className="flex items-center justify-between">
+          <Label className="text-base">Keep Original Audio</Label>
           <Switch
             checked={prefs.saveVoice}
             onCheckedChange={(v) => setPrefs({ ...prefs, saveVoice: v })}
-            aria-label="Toggle save voice"
+            aria-label="Toggle audio retention"
           />
         </CardContent>
       </Card>
 
-      {/* Diagnostics ---------------------------------------------------*/}
+      {/* Diagnostics */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Diagnostics</CardTitle>
-          <CardDescription className="leading-relaxed text-sm md:text-base">
-            Share anonymous crash logs to improve Local Loop. Default: off.
+          <CardTitle className="text-2xl">Diagnostics</CardTitle>
+          <CardDescription className="text-base">
+            Share anonymous logs to help. No personal data is included and helps developers improve this project. Default: Off. 
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-between gap-4 md:gap-6"> {/* Adjusted responsive gap */}
-          <div className="space-y-1">
-            <p className="font-medium text-base">Share crash reports</p> {/* Standardized text size */}
-            <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
-              Contains <em>no</em> personal data — just stack traces & performance.
-            </p>
-          </div>
+        <CardContent className="flex items-center justify-between">
+          <Label className="text-base">Enable Crash Reports</Label>
           <Switch
             checked={prefs.shareDiagnostics}
-            onCheckedChange={(v) =>
-              setPrefs({ ...prefs, shareDiagnostics: v })
-            }
-            aria-label="Toggle diagnostics"
+            onCheckedChange={(v) => setPrefs({ ...prefs, shareDiagnostics: v })}
+            aria-label="Toggle crash reports"
           />
         </CardContent>
-      </Card>
-
-      {/* Reset Section -------------------------------------------------*/}
-      <Card className="border-border/60">
-        <CardHeader>
-          <CardTitle className="text-xl">Reset Local Loop</CardTitle>
-          <CardDescription className="leading-relaxed text-sm md:text-base">
-            Need a fresh start? This will delete all user preferences and stored
-            data in this browser. This does <strong className="font-bold">not</strong> improve privacy
-            (nothing lives outside your device) — it simply erases your local progress.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <Dialog open={confirmReset} onOpenChange={setConfirmReset}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="text-base"> {/* Standardized button text size */}
-                Start Over
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="text-xl md:text-2xl">
-                  Reset Local Loop?
-                </DialogTitle>
-                <DialogDescription className="leading-relaxed text-base">
-                  This will delete every session, XP, and preference stored
-                  locally. It is <em>irreversible</em> and only useful if you want to
-                  reboot your flow from zero.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="justify-end gap-3">
-                <Button
-                  variant="ghost"
-                  onClick={() => setConfirmReset(false)}
-                  className="text-base"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleReset}
-                  className="text-base"
-                >
-                  Yes, reset
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardFooter>
       </Card>
 
       <Separator />
-      <p className="text-center text-sm md:text-base leading-relaxed text-muted-foreground">
-        Built for flow — engineered for privacy.
+      <p className="text-center text-base">
+        No servers. No telemetry. Full privacy. Always local.
       </p>
     </div>
   );

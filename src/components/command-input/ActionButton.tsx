@@ -52,7 +52,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       sfx.onClick(); // Play click sound
       onSend();
     } else {
-      sfx.onClick(); // Play click sound
+      sfx.switch(); // Play click sound
       startRecording();
     }
   };

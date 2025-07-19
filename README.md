@@ -1,4 +1,4 @@
-# Locally Loop | Productivity at Localhost
+`# Locally Loop | Productivity at Localhost
 
 A **local-first**, **frictionless**, gamified productivity tool. From intention to impact in a single line and no plans, no pause, just progress.
 

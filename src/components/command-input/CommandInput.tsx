@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Textarea as ShadTextarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useSfx } from "@/lib/sfx";
 
 export interface CommandTextareaProps
   extends Omit<TextareaProps, "value" | "defaultValue" | "onSubmit"> {
@@ -121,6 +122,9 @@ export const CommandTextarea = React.forwardRef<
 
   React.useLayoutEffect(resize, [value, resize]);
 
+    const { play } = useSfx() // For direct play (e.g., onCheckedChange)
+
+
   return (
     <ShadTextarea
       ref={innerRef}
@@ -129,6 +133,11 @@ export const CommandTextarea = React.forwardRef<
       onKeyDown={handleKeyDown}
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}
+      onFocus={() => {
+        if (!isRecording) {
+          play("punchy_tap"); // Play hover sound when focused
+        }
+      }}
       className={cn(
         `
         relative z-10 w-full rounded-md border-none bg-input-dark text-gray-100

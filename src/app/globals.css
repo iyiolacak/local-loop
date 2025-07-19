@@ -125,6 +125,8 @@
   --color-foreground: var(--foreground);
   --color-product: var(--product);
   --color-input-dark: var(--input-dark);
+  --color-product-gray: var(--product-gray);
+  --color-product-card: var(--product-card);
   --font-sans: "PPNeueMontreal", sans-serif;
     --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -167,6 +169,7 @@
   --background: oklch(1 0 0);
   --foreground: #231b1b;
   --input-dark: #262729;
+  --product-gray: #474f54;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -201,6 +204,8 @@
 .dark {
   --background: #141517;
   --input-dark: #1e1f21;
+  --product-gray: #474f54;
+  --product-card: #1F2023;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
