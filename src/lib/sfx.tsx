@@ -16,7 +16,7 @@ export const SFX_MAP = {
   click_2: { src: "/sfx/click_2.mp3", volume: 0.55 },
   popup: { src: "/sfx/pop_up.mp3", volume: 0.4 },
   switch: { src: "/sfx/switch.mp3", volume: 1 },
-  switch_2: { src: "/sfx/switch_1.mp3", volume: 1 },
+  switch_2: { src: "/sfx/switch_1.mp3", volume: 0.55 },
     punchy_tap: { src: "/sfx/punchy_tap.mp3", volume: 0.55 },
 
 } as const;

@@ -1,6 +1,6 @@
 `# Locally Loop | Productivity at Localhost
 
-A **local-first**, **frictionless**, gamified productivity tool. From intention to impact in a single line and no plans, no pause, just progress.
+A **local-only**, **frictionless**, gamified productivity tool. From intention to impact in a single line and no plans, no pause, just progress.
 
 Drop the chore of to-do lists **Inspired by the flow state and reward loops of gaming (e.g., League of Legends)**, Locally Loop requires **zero task maintenance**, you simply type what you did or want to do, hit Enter, and get instant XP and feedback.
 <img width="1477" height="255" alt="image" src="https://github.com/user-attachments/assets/14c2aaba-7164-474c-a990-6217d9c918bf" />

@@ -7,9 +7,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,15 +18,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Lock } from "iconoir-react/regular";
 
 // ---------------------------------------------------------------------------
@@ -36,7 +25,7 @@ import { Lock } from "iconoir-react/regular";
 // ---------------------------------------------------------------------------
 const LS_KEY = "ll:userPrefs" as const;
 interface UserPrefs {
-  model: "openai" | "selfHosted";
+  model: "openai" | "google-gemini-2.5-flash";
   saveVoice: boolean;
   shareDiagnostics: boolean;
 }
@@ -65,7 +54,6 @@ const savePrefs = (prefs: UserPrefs) => {
 
 export default function PrivacySettings() {
   const [prefs, setPrefs] = useState<UserPrefs>(loadPrefs);
-  const [confirmReset, setConfirmReset] = useState(false);
 
   // Auto-save preferences with a slight debounce
   useEffect(() => {
@@ -73,15 +61,6 @@ export default function PrivacySettings() {
     return () => clearTimeout(id);
   }, [prefs]);
 
-  const handleReset = () => {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.removeItem(LS_KEY);
-      setPrefs(DEFAULT_PREFS);
-      setConfirmReset(false);
-      setTimeout(() => window.location.reload(), 200);
-    } catch {}
-  };
 
   return (
     <div className="mx-auto max-w-2xl p-6 space-y-10">

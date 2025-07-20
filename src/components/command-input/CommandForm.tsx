@@ -33,7 +33,7 @@ export const CommandForm: React.FC<CommandFormProps> = (props) => {
           onSubmit={handleSubmit}
           placeholder={recorder.isRecording ? "Listening..." : placeholder}
           // Pad right to accommodate the widest state of the action button (w-28 = 7rem)
-          className="relative z-10 dark:max-h-30 pr-[7.5rem] dark:pr-[7.5rem]"        />
+          className="relative z-10 dark:max-h-30 !max-h-40 pr-[7.5rem] dark:pr-[7.5rem]"        />
 
         {/* Primary Action Button */}
         <ActionButton
