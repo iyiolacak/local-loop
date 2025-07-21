@@ -1,4 +1,4 @@
-`# Locally Loop | Productivity at Localhost
+# Locally Loop | Productivity at Localhost
 
 A **local-only**, **frictionless**, gamified productivity tool. From intention to impact in a single line and no plans, no pause, just progress.
 
@@ -8,7 +8,7 @@ Drop the chore of to-do lists **Inspired by the flow state and reward loops of g
 Locally Loop lives right in your browser(CLI soon). No backend, no telemetry, so every action is private, persistent, and lightning-fast. Simply type what you did("fed my car")
 ---
 
-## 🎯 Key Features
+## Key Features
 
 * **Ambient Input Bar**: A single persistent input field; no to-do lists, no multi-step forms.
 * **Instant Logging & Completion**: Type in natural language to **create** or **complete** tasks with one keystroke.
