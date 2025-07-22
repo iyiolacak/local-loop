@@ -172,4 +172,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
 
 GPLv3 © 2025 [iyiolacak](https://github.com/iyiolacak)
 
-*Turn every intention into compounding progress.*
+*Turn every intention into compounding progress. The  progress you can feel and measure*

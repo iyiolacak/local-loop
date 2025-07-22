@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { SfxProvider } from "@/lib/sfx";
+import { Providers } from "./Providers";
 
 export const metadata: Metadata = {
   title: "Locally Loop | Productivity at Localhost",
@@ -13,12 +12,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" className="dark">
       <body className={`antialiased font-sans`}>
-        <SfxProvider>
-        <TooltipProvider>{children}</TooltipProvider>
-        </SfxProvider>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
