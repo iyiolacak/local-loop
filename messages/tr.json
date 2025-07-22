@@ -1,0 +1,41 @@
+{
+  "HomePage": {
+    "title": "Merhaba Dünya!"
+  },
+  "CommandForm": {
+    "placeholder": "Ne yapmak istediğinizi yazın veya bir sesli not kaydedin...",
+    "tooltipSend": "Modele özel olarak gönder*",
+    "tooltipRecording": "Kaydediliyor... yerel olarak kaydedildi*",
+    "tooltipRecord": "Özel bir sesli not kaydet*",
+    "listening": "Dinleniyor..."
+  },
+  "Footer": {
+    "copyright": "© 2025 Locally Loop",
+    "license": "GPLv3 Lisansı",
+    "privacy": "Önce gizlilik · Yalnızca yerel",
+    "github": "GitHub",
+    "licenseLink": "Lisans"
+  },
+  "SettingsPage": {
+    "title": "Gizlilik ve Şeffaflık",
+    "description": "Locally Loop, <strong>önce gizliliği</strong> ilke edinen bir üretkenlik uygulamasıdır. <em>Hiçbir</em> arka uç sunucusu, hesap veya analiz yoktur. Tüm verileriniz, oturumlarınız, günlükleriniz ve ses kayıtlarınız,<br/>siz paylaşmayı seçene kadar &ldquo;cihazda&rdquo; kalır.<br className=\"mb-2\"/>Yalnızca yazdığınız metin ve minimal bir bağlam parçacığı, doğrudan tarayıcınızdan seçtiğiniz LLM sağlayıcısına gider.",
+    "modelProvider": {
+      "title": "Model Sağlayıcı",
+      "description": "İstemlerinizin nerede işleneceğini seçin. Barındırılan çıkarım için OpenAI'yi seçin veya her şeyi kontrolünüz altında tutmak için kendi barındırdığınız LLM uç noktanıza yönlendirin.",
+      "selectPlaceholder": "Sağlayıcı seçin",
+      "openai": "OpenAI GPT‑4o",
+      "gemini": "Google Gemini 2.5 Flash"
+    },
+    "voiceInput": {
+      "title": "Ses Girişi",
+      "description": "Ham ses kayıtlarının transkripsiyondan sonra ne olacağını kontrol edin. Onay verdiğinizde, ses kayıtları daha sonra tekrar dinlemek için yerel olarak saklanır.<br/>Kayıtlarınızı zaman tünelinizde (cihazda) görmek istiyorsanız, bu seçeneği etkinleştirin.",
+      "keepAudio": "Orijinal Sesi Sakla"
+    },
+    "diagnostics": {
+      "title": "Teşhis",
+      "description": "Yardımcı olmak için anonim günlükleri paylaşın. Hiçbir kişisel veri dahil edilmez ve geliştiricilerin bu projeyi iyileştirmesine yardımcı olur. Varsayılan: Kapalı.",
+      "enableCrashReports": "Çökme Raporlarını Etkinleştir"
+    },
+    "footer": "Sunucu yok. Telemetri yok. Tam gizlilik. Her zaman yerel."
+  }
+}

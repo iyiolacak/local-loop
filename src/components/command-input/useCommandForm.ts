@@ -1,12 +1,13 @@
-// src/components/command-input/useCommandForm.ts
 import { useVoiceRecorder } from "@/app/hooks/useVoiceRecorder";
+import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 import { CommandFormProps } from "./types";
 
 export function useCommandForm({
   onSubmit,
-  placeholder = "Describe what you want to build or record a voice note...",
+  placeholder: defaultPlaceholder,
 }: CommandFormProps) {
+  const t = useTranslations('CommandForm');
   const [text, setText] = useState("");
   const hasText = text.trim().length > 0;
 
@@ -27,11 +28,14 @@ export function useCommandForm({
     setText("");
   }, [text, onSubmit]);
 
-const tooltipMain = hasText
-  ? "Send privately to model*"
-  : recorder.isRecording
-  ? "Recording... saved locally*"
-  : "Record a private voice note*";
+  const placeholder = defaultPlaceholder || t('placeholder');
+
+  const tooltipMain = hasText
+    ? t('tooltipSend')
+    : recorder.isRecording
+    ? t('tooltipRecording')
+    : t('tooltipRecord');
+
   return {
     text,
     setText,

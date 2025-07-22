@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "A local-first, frictionless, gamified productivity tool",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

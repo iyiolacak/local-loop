@@ -1,46 +1,56 @@
 import { create, StateCreator } from "zustand";
 import { persist } from "zustand/middleware";
 
-type OnboardingStatus = "skipped" | "done" | "prompt";
+// --- Slice Interfaces ---
 
-interface AppSettingsStore {
-  // ONBOARDING - Generally includes prompting API key
-  onboardingStatus: OnboardingStatus;
-  setOnboardingStatus: (status: OnboardingStatus) => void;
+interface OnboardingSlice {
+  onboardingStatus: "skipped" | "done" | "prompt";
+  setOnboardingStatus: (status: "skipped" | "done" | "prompt") => void;
+}
 
-  // API KEY
+interface ApiKeySlice {
   apiKey: string | null;
   setApiKey: (key: string | null) => void;
   clearApiKey: () => void;
   hasApiKey: () => boolean;
-
-  // LANGUAGE
-  language: string;
-  setLanguage: (lang: string) => void;
 }
 
-const createLanguageSlice: StateCreator<
-  AppSettingsStore,
-  [],
-  [],
-  Pick<AppSettingsStore, "language" | "setLanguage">
-> = (set) => ({
-  language: "en",
-  setLanguage: () => set((state) => ({ language: state.language })),
+interface LocaleSlice {
+  locale: string;
+  setLocale: (locale: string) => void;
+}
+
+// --- Combined AppSettingsStore Type ---
+
+type AppSettingsStore = OnboardingSlice & ApiKeySlice & LocaleSlice;
+
+// --- Individual Slice Creators ---
+
+const createOnboardingSlice: StateCreator<AppSettingsStore, [], [], OnboardingSlice> = (set) => ({
+  onboardingStatus: "prompt",
+  setOnboardingStatus: (status) => set({ onboardingStatus: status }),
 });
 
-const useAppSettings = create<AppSettingsStore>()(
+const createApiKeySlice: StateCreator<AppSettingsStore, [], [], ApiKeySlice> = (set, get) => ({
+  apiKey: null,
+  setApiKey: (key) => set({ apiKey: key }),
+  clearApiKey: () => set({ apiKey: null }),
+  hasApiKey: () => get().apiKey !== null,
+});
+
+const createLocaleSlice: StateCreator<AppSettingsStore, [], [], LocaleSlice> = (set) => ({
+  locale: "en",
+  setLocale: (locale: string) => set({ locale }),
+});
+
+// --- Main AppSettings Store ---
+
+export const useAppSettings = create<AppSettingsStore>()(
   persist(
-    (set, get, ...a) => ({
-      onboardingStatus: "prompt",
-      setOnboardingStatus: (status) => set({ onboardingStatus: status }),
-
-      apiKey: null,
-      setApiKey: (key) => set({ apiKey: key }),
-      clearApiKey: () => set({ apiKey: null }),
-      hasApiKey: () => get().apiKey !== null,
-
-      ...createLanguageSlice(set, get, ...a),
+    (...a) => ({
+      ...createOnboardingSlice(...a),
+      ...createApiKeySlice(...a),
+      ...createLocaleSlice(...a),
     }),
     {
       name: "ll:app-settings", // key in localStorage

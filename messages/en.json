@@ -1,5 +1,41 @@
 {
   "HomePage": {
     "title": "Hello world!"
+  },
+  "CommandForm": {
+    "placeholder": "Describe what you want to build or record a voice note...",
+    "tooltipSend": "Send privately to model*",
+    "tooltipRecording": "Recording... saved locally*",
+    "tooltipRecord": "Record a private voice note*",
+    "listening": "Listening..."
+  },
+  "Footer": {
+    "copyright": "© 2025 Locally Loop",
+    "license": "GPLv3 License",
+    "privacy": "Privacy-first · Local-only",
+    "github": "GitHub",
+    "licenseLink": "License"
+  },
+  "SettingsPage": {
+    "title": "Privacy & Transparency",
+    "description": "Locally Loop is a <strong>privacy-first</strong> productivity app. There are <em>no</em> backend servers, accounts, or analytics. All your data, sessions, logs, and audio,<br/>stays &ldquo;on device&rdquo; until you choose to share.<br className=\"mb-2\"/>Only the text you type, plus a minimal context snippet, goes directly from your browser to the LLM provider you select.",
+    "modelProvider": {
+      "title": "Model Provider",
+      "description": "Choose where your prompts are processed. Select OpenAI for hosted inference or point to your own self-hosted LLM endpoint to keep everything under your control.",
+      "selectPlaceholder": "Select provider",
+      "openai": "OpenAI GPT‑4o",
+      "gemini": "Google Gemini 2.5 Flash"
+    },
+    "voiceInput": {
+      "title": "Voice Input",
+      "description": "Control what happens to raw audio recordings after transcription. On opt-in voice records are stored locally for listening them again later.<br/>If you want to see your records in your timeline(on device), opt it in",
+      "keepAudio": "Keep Original Audio"
+    },
+    "diagnostics": {
+      "title": "Diagnostics",
+      "description": "Share anonymous logs to help. No personal data is included and helps developers improve this project. Default: Off.",
+      "enableCrashReports": "Enable Crash Reports"
+    },
+    "footer": "No servers. No telemetry. Full privacy. Always local."
   }
 }

@@ -105,8 +105,8 @@ const SelectTrigger = React.forwardRef<
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <div className="px-2 py-1 bg-background rounded-sm ">
-        <NavArrowDown className="size-4 text-product" />
+        <div className="px-2 py-1bg-transparent rounded-sm ">
+        <NavArrowDown className="size-4 text-product group-hover:text-background " />
         </div>
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
