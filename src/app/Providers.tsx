@@ -2,7 +2,7 @@
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SfxProvider } from "@/lib/sfx";
-import ApiKeyPrompt from "@/components/ApiKeyPrompt";
+import ApiKeyPrompt from "@/components/ApiKeyDrawer/ApiKeyPrompt";
 import { NextIntlClientProvider } from 'next-intl';
 import { useAppSettings } from './store/appPreferences';
 import { useEffect, useState } from 'react';

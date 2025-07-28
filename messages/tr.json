@@ -1,6 +1,6 @@
 {
   "HomePage": {
-    "title": "Merhaba Dünya!"
+    "title": "Merhaba `Dünya!"
   },
   "CommandForm": {
     "placeholder": "Ne yapmak istediğinizi yazın veya bir sesli not kaydedin...",
@@ -12,7 +12,7 @@
   "Footer": {
     "copyright": "© 2025 Locally Loop",
     "license": "GPLv3 Lisansı",
-    "privacy": "Önce gizlilik · Yalnızca yerel",
+    "privacy": "Gizliliğe öncelik · İnternete aktarım yok",
     "github": "GitHub",
     "licenseLink": "Lisans"
   },
