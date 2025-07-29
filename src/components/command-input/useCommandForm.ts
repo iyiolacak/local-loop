@@ -7,7 +7,7 @@ export function useCommandForm({
   onSubmit,
   placeholder: defaultPlaceholder,
 }: CommandFormProps) {
-  const t = useTranslations('CommandForm');
+  const t = useTranslations("CommandForm");
   const [text, setText] = useState("");
   const hasText = text.trim().length > 0;
 
@@ -28,13 +28,13 @@ export function useCommandForm({
     setText("");
   }, [text, onSubmit]);
 
-  const placeholder = defaultPlaceholder || t('placeholder');
+  const placeholder = defaultPlaceholder || t("placeholder");
 
   const tooltipMain = hasText
-    ? t('tooltipSend')
+    ? t("tooltipSend")
     : recorder.isRecording
-    ? t('tooltipRecording')
-    : t('tooltipRecord');
+    ? t("tooltipRecording")
+    : t("tooltipRecord");
 
   return {
     text,

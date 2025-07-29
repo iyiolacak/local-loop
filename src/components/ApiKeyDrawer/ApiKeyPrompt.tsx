@@ -4,23 +4,17 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  ReactNode,
   useRef,
   FormEvent,
 } from "react";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { useApiKey } from "@/app/store/useApiKey";
 import { useSfx } from "@/lib/sfx";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ApiKeyForm from "./ApiKeyForm";
 import Image from "next/image";
-
-interface TranslationFn {
-  (key: string, options?: Record<string, unknown>): string;
-}
-const useT = (): TranslationFn => (key) => key;
+import { useAppSettings } from "@/app/store/appPreferences";
+import { useTranslations } from "next-intl";
 
 export interface ApiKeyPromptProps {
   forceOpen?: boolean;
@@ -35,119 +29,155 @@ export const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = ({
   disableAutoOpen,
   hideDefaultChrome,
 }) => {
-  const t = useT();
+  const t = useTranslations("Drawer.ApiKeyPrompt");
   const { play } = useSfx();
-  const {
-    apiKey,
-    setApiKey,
-    clearApiKey,
-    hasApiKey,
-    onboardingSkipped,
-    setOnboardingSkipped,
-  } = useApiKey();
+  const { hasApiKey, onboardingStatus, setOnboardingStatus } = useAppSettings();
 
   const [open, setOpen] = useState(false);
+  const [showPane, setShowPane] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Open drawer
+  // Open drawer logic
   useEffect(() => {
     if (forceOpen) setOpen(true);
-    else if (!disableAutoOpen && !hasApiKey() && !onboardingSkipped)
+    else if (!disableAutoOpen && !hasApiKey() && onboardingStatus !== "done")
       setOpen(true);
-  }, [forceOpen, disableAutoOpen, hasApiKey, onboardingSkipped]);
+  }, [forceOpen, disableAutoOpen, hasApiKey, onboardingStatus]);
 
-  // Auto-focus input
+  // Autofocus
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
 
-  // Delay-show pane
+  // Delayed pane reveal
+  useEffect(() => {
+    if (open) {
+      const timeout = setTimeout(() => setShowPane(true), 2000);
+      return () => clearTimeout(timeout);
+    } else {
+      setShowPane(false);
+    }
+  }, [open]);
+
+  const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
   const close = useCallback(
     (skip = false) => {
-      if (skip) setOnboardingSkipped(true);
+      if (skip) setOnboardingStatus("skipped");
+      setShowVideo(false);
       setOpen(false);
       onClose?.();
       play("click");
     },
-    [onClose, play, setOnboardingSkipped]
+    [onClose, play, setOnboardingStatus]
   );
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim()) {
-      setError(t("Please enter a valid API key."));
-      return;
-    }
-    setApiKey(inputValue.trim());
-    toast.success(t("API key saved!"));
+  const handleSuccess = useCallback(() => {
+    toast.success(t("successToast"));
+    setOnboardingStatus("done");
+    play("game_start");
     close();
-  };
+  }, [t, setOnboardingStatus, play, close]);
 
-  if (!open) return null;
-
-  // Video embed URL
   const embedUrl = "https://www.youtube.com/embed/bK5MQr6CXc8?autoplay=1";
 
-  return (
-    <Drawer open={open} onOpenChange={(v) => !v && close(true)}>
-      <DrawerTitle className="text-center text-2xl font-semibold">
-        {t("Enter your OpenAI API Key")}
-      </DrawerTitle>
-      <DrawerContent className="w-full h-screen p-3 m-0 bg-background overflow-hidden">
-        <div className="flex h-full">
-          {/* 
-            Split pane UX: 
-            The left pane (image/video) animates in after a delay to visually guide users on how to get an API key.
-            The right pane contains the form for entering the API key.
-          */}
-          {/* IMAGE/VIDEO PANE */}
-          <div
-            className="hidden md:flex items-center group justify-center relative overflow-hidden cursor-pointer"
-            onClick={() => setShowVideo(true)}
-          >
-            {(
-              <>
-                {!showVideo ? (
-                  <>
-                  <div className="min-w-full flex flex-1 h-5/6 relative rounded-3xl overflow-hidden">
+  // Simple fade animation (optionally add slight scale for micro-polish)
+  const fadeVariants = {
+    hidden: { opacity: 0, scale: 0.99 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.33, ease: "easeOut" },
+    },
+  };
 
+  // When closing: first hide child, then Drawer
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      {/* <DrawerTitle className="text-center text-2xl font-semibold">
+        {t("title")}
+      </DrawerTitle> */}
+      <DrawerContent className="w-full h-screen md:px-12 py-3 m-0 bg-background overflow-hidden">
+        <div className="flex flex-col md:flex-row h-full w-full">
+          {/* IMAGE/VIDEO PANE */}
+          <AnimatePresence>
+            {showPane && (
+              <motion.div
+                key="image-pane"
+                initial="hidden"
+                animate="visible"
+                variants={fadeVariants}
+                className={`
+                  flex flex-1 items-center group justify-center
+                  relative overflow-hidden cursor-pointer py-3
+                  mb-4 md:mb-0 md:mr-4
+                  max-h-[160px] px-3 md:max-h-none
+                  rounded-2xl
+                  ${showVideo ? "z-40" : "z-20"}
+                `}
+                onClick={() => setShowVideo(true)}
+                tabIndex={0}
+                aria-label="See video guide on getting your API key"
+                role="button"
+              >
+                {!showVideo ? (
+                  <div className="w-full h-full min-h-[180px] relative rounded-2xl overflow-hidden">
                     <Image
                       src="/pictures/get_api_key.png"
                       alt="How to get an API key"
-                      className="relative w-full blur-xs h-full rounded-3xl object-cover"
-                      width={500}
-                      height={500}
-                      />
-                    <div className="absolute inset-0 rounded-3xl w-full h-full bg-black/30 bg-opacity-40 flex items-center justify-center">
-                      <p className="text-white group-hover:underline text-nowrap text-xl md:text-2xl font-medium">
-                        See how to get an OpenAI API in 1 minute
+                      className="w-full h-full rounded-2xl object-cover"
+                      width={480}
+                      height={320}
+                      priority
+                    />
+                    <div className="absolute inset-0 rounded-2xl bg-black/30 bg-opacity-40 flex items-center justify-center">
+                      <p className="text-white group-hover:underline text-nowrap text-lg md:text-2xl font-medium drop-shadow">
+                        {t("tap-to-api-tutorial")}
                       </p>
                     </div>
-                      </div>
-                  </>
+                  </div>
                 ) : (
-                  <iframe
-                    src={embedUrl}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-5/6 h-5/6"
-                    title="tutorial video"
-                  />
+                  <div className="absolute inset-0 flex items-center justify-center z-50 bg-black/90 rounded-2xl">
+                    <motion.div
+                      key={embedUrl}
+                      initial={{ scale: 0.97, opacity: 0.6 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="w-full h-full max-w-full aspect-video rounded-xl overflow-hidden shadow-xl flex items-center justify-center"
+                    >
+                      <iframe
+                        src={embedUrl}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full rounded-xl"
+                        title="OpenAI API Key Tutorial Video"
+                        aria-label="OpenAI API Key Tutorial Video"
+                        tabIndex={0}
+                        frameBorder="0"
+                      />
+                    </motion.div>
+                    <button
+                      className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 z-50"
+                      aria-label="Close video"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowVideo(false);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
                 )}
-              </>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
 
           {/* FORM PANE */}
-          <div
-            className="flex flex-col flex-1 justify-center items-center p-8 overflow-auto"
-          >
-            <ApiKeyForm onSuccess={() => {}} />
+          <div className="flex flex-col flex-1 justify-center items-center p-4 md:p-8 overflow-auto">
+            <ApiKeyForm onSuccess={handleSuccess} />
           </div>
         </div>
       </DrawerContent>

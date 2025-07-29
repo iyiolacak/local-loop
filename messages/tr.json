@@ -16,15 +16,41 @@
     "github": "GitHub",
     "licenseLink": "Lisans"
   },
+  "Drawer": {
+    "ApiKeyPrompt": {
+      "title": "ChatGPT Anahtarınızı Bağlayalım",
+      "description": "Locally Loop'un çalışması için bir OpenAI API anahtarı gerekiyor. Aşağıya yapıştırın veya OpenAI Platformu'ndan bir anahtar alın.",
+      "openaiPlatformLink": "OpenAI Platformu",
+      "inputLabel": "OpenAI API Anahtarınız",
+      "inputPlaceholder": "sk-...",
+      "saveButton": "Anahtarı Kaydet",
+      "errorEmpty": "Lütfen OpenAI API anahtarınızı girin.",
+      "successToast": "Locally Loop hazır! Akışınıza geçebilirsiniz.",
+      "tap-to-api-tutorial": "1 dakikada OpenAI API anahtarı al"
+    }
+  },
   "SettingsPage": {
     "title": "Gizlilik ve Şeffaflık",
-    "description": "Locally Loop, <strong>önce gizliliği</strong> ilke edinen bir üretkenlik uygulamasıdır. <em>Hiçbir</em> arka uç sunucusu, hesap veya analiz yoktur. Tüm verileriniz, oturumlarınız, günlükleriniz ve ses kayıtlarınız,<br/>siz paylaşmayı seçene kadar &ldquo;cihazda&rdquo; kalır.<br className=\"mb-2\"/>Yalnızca yazdığınız metin ve minimal bir bağlam parçacığı, doğrudan tarayıcınızdan seçtiğiniz LLM sağlayıcısına gider.",
+    "description": "Locally Loop, <strong>önce gizliliği</strong> ilke edinen bir üretkenlik uygulamasıdır. <em>Hiçbir</em> arka uç sunucusu, hesap veya analiz yoktur.<br></br> Tüm verileriniz, oturumlarınız, günlükleriniz ve ses kayıtlarınız, siz paylaşmayı seçene kadar cihazda kalır.<br></br>Yalnızca yazdığınız metin ve minimal bir bağlam parçacığı, doğrudan tarayıcınızdan seçtiğiniz LLM sağlayıcısına gider.",
     "modelProvider": {
       "title": "Model Sağlayıcı",
       "description": "İstemlerinizin nerede işleneceğini seçin. Barındırılan çıkarım için OpenAI'yi seçin veya her şeyi kontrolünüz altında tutmak için kendi barındırdığınız LLM uç noktanıza yönlendirin.",
       "selectPlaceholder": "Sağlayıcı seçin",
       "openai": "OpenAI GPT‑4o",
       "gemini": "Google Gemini 2.5 Flash"
+    },
+    "apiKey": {
+      "title": "API Anahtarı",
+      "description": "Seçilen model sağlayıcısı için API anahtarınızı girin. Bu anahtar, LLM hizmetine yaptığınız istekleri kimlik doğrulamak için kullanılır.",
+      "placeholder": "API anahtarınızı girin",
+      "saveButton": "API Anahtarını Kaydet"
+    },
+    "locale": {
+      "title": "Dil",
+      "description": "Uygulama arayüzü için tercih ettiğiniz dili seçin. Bu ayar, uygulamanın metinlerini ve mesajlarını seçeceğiniz dile göre değiştirir.",
+      "selectPlaceholder": "Dil seçin",
+      "en": "İngilizce",
+      "tr": "Türkçe"
     },
     "voiceInput": {
       "title": "Ses Girişi",

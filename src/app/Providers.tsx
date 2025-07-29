@@ -35,10 +35,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SfxProvider>
       <TooltipProvider>
+        {messages && (
+          // Ensure messages are loaded before rendering the provider
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
+          <ApiKeyPrompt />
         </NextIntlClientProvider>
-        <ApiKeyPrompt />
+        )}
       </TooltipProvider>
     </SfxProvider>
   );

@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { CommandTextarea } from "./CommandInput";
 import { TooltipProvider } from "../ui/tooltip";

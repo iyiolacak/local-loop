@@ -3,26 +3,22 @@
 import React, { FormEvent, useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { useApiKey } from "@/app/store/useApiKey";
+import { toast } from "sonner";;
+import { ArrowUpRight, KeyPlus, Link } from "iconoir-react/regular";
+import { useTranslations } from "next-intl";
+import { useAppSettings } from "@/app/store/appPreferences";
 
 interface ApiKeyFormProps {
   onSuccess: () => void;
 }
 
-/**
- * Concise API Key form for Locally Loop's core functionality.
- * - Simple, direct copy.
- * - Autofocus, inline validation.
- * - Increased typography for better readability.
- * - Neutral, functional title.
- */
 const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSuccess }) => {
-  const { apiKey, setApiKey } = useApiKey();
-
+  const { apiKey, setApiKey } = useAppSettings();
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState<string>(apiKey ?? "");
   const [error, setError] = useState<string | null>(null);
+
+  const t = useTranslations("Drawer");
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -31,64 +27,77 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSuccess }) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) {
-      setError("Please enter your OpenAI API key.");
+      setError(t("ApiKeyPrompt.errorEmpty"));
       return;
     }
     setApiKey(inputValue.trim());
-    toast.success("Locally Loop is ready! Get into your flow.");
+    toast.success(t("ApiKeyPrompt.successToast"));
     onSuccess();
   };
 
   return (
-    <div className="max-w-2xl space-y-8">
-      {/* Header and Description: Short and direct, with larger typography */}
-      <div className="text-center mb-6">
+    <div className="max-w-2xl items-center justify-center space-y-8">
+      <div className="items-center justify-center flex flex-col text-center mb-6">
+        <div className="hidden md:block mb-6 p-2 rounded-sm dark:bg-input-dark">
+          <KeyPlus strokeWidth={2} width={30} height={30} className="size-6 text-muted-foreground" />
+        </div>
         <h2 className="text-3xl font-bold tracking-loose text-gray-900 dark:text-gray-50 mb-3">
-          Let’s Connect Your ChatGPT Key
-          {/* This is the most direct and neutral option */}
+          {t("ApiKeyPrompt.title")}
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-          Locally Loop requires an OpenAI API key to function.
+          {t("ApiKeyPrompt.description")}
           <br />
-          Paste your key below. You can get one from the{" "}
           <a
             href="https://platform.openai.com/account/api-keys"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-product dark:text-product hover:underline"
+            className="text-product dark:text-product hover:underline items-center flex justify-center"
           >
-            OpenAI Platform
+            {t("ApiKeyPrompt.openaiPlatformLink")}<ArrowUpRight strokeWidth={2} className="inline-block size-4" />
           </a>
-          .
         </p>
       </div>
 
-      {/* API Key Input Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
+      <form onSubmit={handleSubmit} className="flex w-full justify-center space-y-6">
+        <div className="relative w-full max-w-xl">
           <Input
             id="apiKey"
             ref={inputRef}
-            label="Your OpenAI API Key"
+            label={t("ApiKeyPrompt.inputLabel")}
             type="password"
-            placeholder="sk-..."
+            placeholder={t("ApiKeyPrompt.inputPlaceholder")}
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
               setError(null);
             }}
             error={error ?? undefined}
-            className="w-full text-lg"
+            autoComplete="off"
+            className="w-full text-lg pr-24"
           />
+          <Button
+            type="submit"
+            disabled={!inputValue.trim()}
+            tabIndex={0}
+            className={`
+              absolute top-1/2 right-1 -translate-y-1/2
+              !h-[calc(100%-8px)] px-5 text-base rounded-md
+              shadow
+              bg-product text-primary-foreground
+              border
+              border-input
+              transition
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+            `}
+            style={{
+              minHeight: "32px",
+              fontWeight: 500,
+            }}
+          >
+            {t("ApiKeyPrompt.saveButton")}
+          </Button>
         </div>
-
-        <Button
-          type="submit"
-          disabled={!inputValue.trim()}
-          className="w-full px-8 py-4 text-xl"
-        >
-          Save Key
-        </Button>
+        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
       </form>
     </div>
   );

@@ -124,6 +124,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-product: var(--product);
+  --color-product-hover: var(--product-hover);
+  --color-product-active: var(--product-active);
   --color-input-dark: var(--input-dark);
   --color-product-gray: var(--product-gray);
   --color-product-card: var(--product-card);
@@ -211,8 +213,10 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: #00e701;
   --product: #00e701;
+  --product-hover: #32FC32;
+  --product-active: #00C600;
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);

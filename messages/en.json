@@ -16,9 +16,23 @@
     "github": "GitHub",
     "licenseLink": "License"
   },
+  "Drawer": {
+    "ApiKeyPrompt": {
+      "title": "Let’s Connect Your ChatGPT Key",
+      "description": "Locally Loop requires an OpenAI API key to function. Paste your key below. You can get one from the OpenAI Platform.",
+      "openaiPlatformLink": "OpenAI Platform",
+      "inputLabel": "Your OpenAI API Key",
+      "inputPlaceholder": "sk-...",
+      "saveButton": "Save Key",
+      "errorEmpty": "Please enter your OpenAI API key.",
+      "successToast": "Locally Loop is ready! Get into your flow.",
+      "tap-to-api-tutorial": "Tap to see 1-minute OpenAI API guide"
+      
+    }
+  },
   "SettingsPage": {
     "title": "Privacy & Transparency",
-    "description": "Locally Loop is a <strong>privacy-first</strong> productivity app. There are <em>no</em> backend servers, accounts, or analytics. All your data, sessions, logs, and audio,<br/>stays &ldquo;on device&rdquo; until you choose to share.<br className=\"mb-2\"/>Only the text you type, plus a minimal context snippet, goes directly from your browser to the LLM provider you select.",
+    "description": "Locally Loop is a <strong>privacy-first</strong> productivity app. There are <em>no</em> backend servers, accounts, or analytics. All your data, sessions, logs, and audio,<br></br> stays on device; until you choose to share.<br></br>Only the text you type, plus a minimal context snippet, goes directly from your browser to the LLM provider you select.",
     "modelProvider": {
       "title": "Model Provider",
       "description": "Choose where your prompts are processed. Select OpenAI for hosted inference or point to your own self-hosted LLM endpoint to keep everything under your control.",
@@ -26,9 +40,22 @@
       "openai": "OpenAI GPT‑4o",
       "gemini": "Google Gemini 2.5 Flash"
     },
+    "apiKey": {
+      "title": "API Key",
+      "description": "Enter your API key for the selected model provider. This key is used to authenticate your requests to the LLM service.",
+      "placeholder": "Enter your API key",
+      "saveButton": "Save API Key"
+    },
+    "locale": {
+      "title": "Language",
+      "description": "Select your preferred language for the app interface. This setting will change the language of the app's text and messages.",
+      "selectPlaceholder": "Select language",
+      "en": "English",
+      "tr": "Turkish"
+    },
     "voiceInput": {
       "title": "Voice Input",
-      "description": "Control what happens to raw audio recordings after transcription. On opt-in voice records are stored locally for listening them again later.<br/>If you want to see your records in your timeline(on device), opt it in",
+      "description": "Control what happens to raw audio recordings after transcription. On opt-in voice records are stored locally for listening them again later.<br></br>If you want to see your records in your timeline(on device), opt it in",
       "keepAudio": "Keep Original Audio"
     },
     "diagnostics": {

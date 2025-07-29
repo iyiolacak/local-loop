@@ -20,7 +20,7 @@ const Header = () => {
             >
               <CommandForm
                 onSubmit={(value) => {
-                  console.log("Command submitted:", value);
+                  
                 }}
               />
             </div>
