@@ -58,7 +58,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSuccess }) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex w-full justify-center space-y-6">
+      <form onSubmit={handleSubmit} className="flex w-full justify-center space-y-6 md:mt-12">
         <div className="relative w-full max-w-xl">
           <Input
             id="apiKey"
@@ -73,16 +73,16 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSuccess }) => {
             }}
             error={error ?? undefined}
             autoComplete="off"
-            className="w-full text-lg pr-24"
+            className="w-full text-lg pr-32"
           />
           <Button
             type="submit"
             disabled={!inputValue.trim()}
             tabIndex={0}
             className={`
-              absolute top-1/2 right-1 -translate-y-1/2
+              absolute top-1/2 right-1 z-50 -translate-y-1/2
               !h-[calc(100%-8px)] px-5 text-base rounded-md
-              shadow
+              
               bg-product text-primary-foreground
               border
               border-input

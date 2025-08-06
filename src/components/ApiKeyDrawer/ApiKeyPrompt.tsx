@@ -98,10 +98,9 @@ export const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = ({
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      {/* <DrawerTitle className="text-center text-2xl font-semibold">
-        {t("title")}
-      </DrawerTitle> */}
       <DrawerContent className="w-full h-screen md:px-12 py-3 m-0 bg-background overflow-hidden">
+      <DrawerTitle className="text-center text-2xl font-semibold">
+      </DrawerTitle>
         <div className="flex flex-col md:flex-row h-full w-full">
           {/* IMAGE/VIDEO PANE */}
           <AnimatePresence>
