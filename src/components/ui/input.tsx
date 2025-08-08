@@ -25,7 +25,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           // Match CommandTextarea visual language:
           "relative z-10 flex h-12 w-full min-w-0 rounded-md bg-input-dark border-none px-3 py-3 text-gray-100 shadow-xs transition-all duration-200 ease-out",
           "selection:bg-primary selection:text-primary-foreground",
-          "focus:border-product focus:ring-1 focus:ring-product focus:outline-none focus-visible:ring-2 focus-visible:ring-product",
+          "focus:border-product focus:ring-1 focus:ring-product focus:outline-none focus-visible:ring-2 ring-product outline-product focus-visible:ring-product",
           // File input styling:
           "file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-lg file:font-medium",
           // Placeholder & disabled:

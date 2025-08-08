@@ -11,3 +11,5 @@ module.exports = {
     '/node_modules/(?!(next-intl|use-intl))',
   ],
 };
+
+

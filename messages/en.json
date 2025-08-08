@@ -7,7 +7,8 @@
     "tooltipSend": "Send privately to model*",
     "tooltipRecording": "Recording... saved locally*",
     "tooltipRecord": "Record a private voice note*",
-    "listening": "Listening..."
+    "listening": "Listening...",
+    "tooltipBusy": "Transcribing via Whisper..."
   },
   "Footer": {
     "copyright": "© 2025 Locally Loop",
@@ -27,7 +28,6 @@
       "errorEmpty": "Please enter your OpenAI API key.",
       "successToast": "Locally Loop is ready! Get into your flow.",
       "tap-to-api-tutorial": "Tap to see 1-minute OpenAI API guide"
-      
     }
   },
   "SettingsPage": {
