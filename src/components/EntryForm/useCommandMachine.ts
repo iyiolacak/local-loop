@@ -5,8 +5,6 @@ import { commandMachine } from "./command.machine";
 
 export function useCommandMachine() {
   const [state, send] = useMachine(commandMachine);
-  console.log("machine typeof:", typeof commandMachine);
-console.log("getInitialSnapshot:", typeof (commandMachine as any).getInitialSnapshot);
 
   const { text, errorMessage } = state.context;
 
@@ -23,7 +21,7 @@ console.log("getInitialSnapshot:", typeof (commandMachine as any).getInitialSnap
   // UI event wrappers — keep JSX layers dumb
   const onChange = useCallback((value: string) => send({ type: "TEXT_CHANGED", value }), [send]);
   const startRecording = useCallback(() => send({ type: "RECORD" }), [send]);
-  const stopRecording = useCallback(() => send({ type: "STOP_RECORDING" }), [send]);
+  const stopRecording = useCallback(() => send({ type: "STOP_RECORDING", Blob }), [send]);
   const cancelRecording = useCallback(() => send({ type: "CANCEL_RECORDING" }), [send]);
   const submit = useCallback(() => send({ type: "SUBMIT" }), [send]);
   const retry = useCallback(() => send({ type: "RETRY" }), [send]);

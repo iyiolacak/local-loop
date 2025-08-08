@@ -13,7 +13,7 @@ interface CommandContext {
 type TextChanged = { type: "TEXT_CHANGED"; value: string };
 type Submit = { type: "SUBMIT" };
 type RecordEvt = { type: "RECORD" };
-type StopRecording = { type: "STOP_RECORDING" };
+type StopRecording = { type: "STOP_RECORDING", blob: Blob };
 type CancelRecording = { type: "CANCEL_RECORDING" };
 type Retry = { type: "RETRY" };
 type Dismiss = { type: "DISMISS" };
@@ -85,7 +85,7 @@ export const commandMachine = createMachine({
         STOP_RECORDING: {
           target: "transcribing",
           actions: assign({
-            audioBlob: () => new Blob(["dummy_audio"], { type: "audio/webm" }),
+            audioBlob: ({ event }) => event,
           }),
         },
         CANCEL_RECORDING: "idle",
