@@ -1,4 +1,5 @@
-import { createMachine, assign } from "xstate";
+// src/components/CommandForm/command.machine.ts
+import { createMachine, assign, fromPromise } from "xstate";
 import { submitText, transcribeAudio } from "./api";
 
 // CONTEXT: The extended state (memory) of our machine.
@@ -13,7 +14,7 @@ interface CommandContext {
 type TextChanged = { type: "TEXT_CHANGED"; value: string };
 type Submit = { type: "SUBMIT" };
 type RecordEvt = { type: "RECORD" };
-type StopRecording = { type: "STOP_RECORDING", blob: Blob };
+type StopRecording = { type: "STOP_RECORDING"; blob: Blob }; // <-- carries Blob
 type CancelRecording = { type: "CANCEL_RECORDING" };
 type Retry = { type: "RETRY" };
 type Dismiss = { type: "DISMISS" };
@@ -64,6 +65,7 @@ export const commandMachine = createMachine({
           guard: ({ context }) => context.text.trim().length === 0,
         },
       ],
+
       on: {
         TEXT_CHANGED: {
           target: "typing",
@@ -85,12 +87,12 @@ export const commandMachine = createMachine({
         STOP_RECORDING: {
           target: "transcribing",
           actions: assign({
-            audioBlob: ({ event }) => event,
+            // store the actual Blob, not the event
+            audioBlob: ({ event }) => (event as StopRecording).blob,
           }),
         },
         CANCEL_RECORDING: "idle",
         TEXT_CHANGED: {
-          // Allow typing while recording to immediately go back to typing
           target: "typing",
           actions: assign({ text: ({ event }) => event.value }),
         },
@@ -98,12 +100,17 @@ export const commandMachine = createMachine({
     },
 
     submitting: {
-      entry: assign({ lastOp: () => "submit" as const, errorMessage: () => undefined }),
+      entry: assign({
+        lastOp: () => "submit" as const,
+        errorMessage: () => undefined,
+      }),
       invoke: {
         id: "submitService",
-        src: async ({ context }) => {
-          await submitText(context.text);
-        },
+        // v5: wrap async with fromPromise; pass text via input 
+        src: fromPromise<void, { text: string }>(async ({ input }) => {
+          await submitText(input.text);
+        }),
+        input: ({ context }) => ({ text: context.text }),
         onDone: {
           target: "idle",
           actions: assign({ text: () => "" }),
@@ -112,8 +119,8 @@ export const commandMachine = createMachine({
           target: "error",
           actions: assign({
             errorMessage: ({ event }) =>
-              (event as { error: unknown })?.error instanceof Error
-                ? (event as { error: Error }).error.message
+              (event as any)?.error instanceof Error
+                ? (event as any).error.message
                 : "The server could not process the request.",
           }),
         },
@@ -121,13 +128,24 @@ export const commandMachine = createMachine({
     },
 
     transcribing: {
-      entry: assign({ lastOp: () => "transcribe" as const, errorMessage: () => undefined }),
+      entry: assign({
+        lastOp: () => "transcribe" as const,
+        errorMessage: () => undefined,
+      }),
       invoke: {
         id: "transcribeService",
-        src: async ({ context }) => {
+        // v5: wrap async with fromPromise; pass blob via input
+        src: fromPromise<string, { blob: Blob }>(async ({ input }) => {
+          // optional defensive checks
+          if (!(input.blob instanceof Blob) || input.blob.size === 0) {
+            throw new Error("No audio to transcribe.");
+          }
+          return transcribeAudio(input.blob);
+        }),
+        input: ({ context }) => {
           const blob = context.audioBlob;
-          if (!blob) throw new Error("No audio to transcribe.");
-          return transcribeAudio(blob);
+          // If blob is missing, still provide an input; src will throw a clear error.
+          return { blob: blob as Blob };
         },
         onDone: {
           target: "typing",
@@ -139,8 +157,8 @@ export const commandMachine = createMachine({
           target: "error",
           actions: assign({
             errorMessage: ({ event }) =>
-              (event as { error: unknown })?.error instanceof Error
-                ? (event as { error: Error }).error.message
+              (event as any)?.error instanceof Error
+                ? (event as any).error.message
                 : "Transcription failed.",
           }),
         },
@@ -153,12 +171,14 @@ export const commandMachine = createMachine({
         RETRY: [
           {
             target: "submitting",
-            guard: ({ context }) => context.lastOp === "submit" && context.text.trim().length > 0,
+            guard: ({ context }) =>
+              context.lastOp === "submit" && context.text.trim().length > 0,
             actions: assign({ errorMessage: () => undefined }),
           },
           {
             target: "transcribing",
-            guard: ({ context }) => context.lastOp === "transcribe" && !!context.audioBlob,
+            guard: ({ context }) =>
+              context.lastOp === "transcribe" && !!context.audioBlob,
             actions: assign({ errorMessage: () => undefined }),
           },
           {
@@ -180,7 +200,10 @@ export const commandMachine = createMachine({
         ],
         TEXT_CHANGED: {
           target: "typing",
-          actions: assign({ text: ({ event }) => event.value, errorMessage: () => undefined }),
+          actions: assign({
+            text: ({ event }) => event.value,
+            errorMessage: () => undefined,
+          }),
         },
       },
     },

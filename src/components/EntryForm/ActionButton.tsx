@@ -4,13 +4,11 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+  Tooltip, TooltipContent, TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Microphone, Send } from "iconoir-react/solid";
-import { ArrowUp, Lock, Trash } from "iconoir-react/regular";
+import { ArrowUp, Lock, Trash, Square } from "iconoir-react/regular"; // ← add Square
 import { AnimatePresence, motion } from "framer-motion";
 import { useHoverClickSounds } from "@/lib/sfx";
 import { useTranslations } from "next-intl";
@@ -19,12 +17,10 @@ export interface ActionButtonProps {
   isRecording: boolean;
   isBusy: boolean;
   canSubmit: boolean;
-
   onRecord: () => void;
   onStop: () => void;    // stop & save (transcribe)
   onCancel: () => void;  // cancel recording
   onSubmit: () => void;
-
   tooltipMain?: string;
   volume?: number;
   className?: string;
@@ -43,51 +39,48 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   className,
 }) => {
   const sfx = useHoverClickSounds();
+  const t = useTranslations("CommandForm");
 
-  // Resolve current visual mode
-  const mode: "busy" | "stop" | "submit" | "record" = isBusy
-    ? "busy"
-    : isRecording
-    ? "stop"
-    : canSubmit
-    ? "submit"
-    : "record";
+  // Resolve current visual/behavior mode
+  const mode: "busy" | "stop" | "submit" | "record" =
+    isBusy ? "busy" : isRecording ? "stop" : canSubmit ? "submit" : "record";
 
-    const t = useTranslations("CommandForm");
-
-    {/*
-          "tooltipSend": "Send privately to model*",
-    "tooltipRecording": "Recording... saved locally*",
-    "tooltipRecord": "Record a private voice note*",
-    "listening": "Listening..."
-
-      */}
-    tooltipMain = tooltipMain || (mode === "busy"
-      ? t("tooltipBusy")
+  // Localized tooltip (with safe fallbacks)
+  const tooltip =
+    tooltipMain ??
+    (mode === "busy"
+      ? (t as any)?.("tooltipBusy") ?? "Working…"
       : mode === "stop"
       ? t("tooltipRecording")
       : mode === "submit"
       ? t("tooltipSend")
-      : t("tooltipRecord")
-    )
+      : t("tooltipRecord"));
+
+  // Primary action
   const handlePrimaryAction = () => {
-    if (isBusy) return;
+    if (mode === "busy") return;
     sfx.onClick();
     if (mode === "record") onRecord();
     else if (mode === "stop") onStop();
     else if (mode === "submit") onSubmit();
   };
 
-  // Choose icon by mode
+  // Icon by mode (Stop shows a square while recording)
   const PrimaryIcon =
-    mode === "busy" ? null : mode === "stop" ? Send : mode === "submit" ? ArrowUp : Microphone;
+    mode === "busy" ? null :
+    mode === "stop" ? Square :
+    mode === "submit" ? ArrowUp :
+    Microphone;
 
   const primaryIconKey =
-    mode === "busy" ? "busy" : mode === "stop" ? "stop" : mode === "submit" ? "send" : "mic";
+    mode === "busy" ? "busy" :
+    mode === "stop" ? "stop" :
+    mode === "submit" ? "send" :
+    "mic";
 
   return (
     <div className={cn("absolute right-2 top-2 z-30 flex h-10 items-center justify-end gap-x-2", className)}>
-      {/* Cancel (only during recording) */}
+      {/* Cancel (only while recording) */}
       <AnimatePresence>
         {isRecording && (
           <motion.div
@@ -102,18 +95,15 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => {
-                    sfx.onClick();
-                    onCancel();
-                  }}
+                  onClick={() => { sfx.onClick(); onCancel(); }}
                   className="h-10 w-10 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  aria-label="Cancel recording"
+                  aria-label={t("cancelRecording", { default: "Cancel recording" }) as any}
                 >
                   <Trash strokeWidth={2} className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p>Cancel Recording</p>
+                <p>{t("cancelRecording", { default: "Cancel recording" })}</p>
               </TooltipContent>
             </Tooltip>
           </motion.div>
@@ -125,10 +115,11 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
         <Tooltip delayDuration={150}>
           <TooltipTrigger asChild>
             <motion.button
+              type="button"
               onClick={handlePrimaryAction}
               onMouseEnter={sfx.onMouseEnter}
-              disabled={isBusy}
-              aria-label={tooltipMain}
+              disabled={mode === "busy"}
+              aria-label={tooltip}
               className={cn(
                 "group relative flex h-10 items-center justify-center rounded-lg bg-product p-0 text-xl text-background shadow-lg",
                 "transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -163,13 +154,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
                       exit={{ opacity: 0 }}
                     >
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.25" />
-                      <path
-                        d="M22 12a10 10 0 0 1-10 10"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeLinecap="round"
-                      />
+                      <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
                     </motion.svg>
                   ) : (
                     <motion.div
@@ -187,16 +172,13 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
             </motion.button>
           </TooltipTrigger>
 
-          <TooltipContent
-            side="top"
-            align="center"
-            className="max-w-[260px] px-4 py-3 bg-[#f7fff7] text-sm font-medium"
-          >
+          <TooltipContent side="top" align="center" className="max-w-[260px] px-4 py-3 bg-[#f7fff7] text-sm font-medium">
             <p className="flex mb-1.5 items-center gap-x-0.5 text-md font-medium">
-              <Lock strokeWidth={2} /> {tooltipMain}
+              <Lock strokeWidth={2} /> {tooltip}
             </p>
             <p className="text-xs text-muted-foreground">
-              *Processed by your chosen model.<br />All else stays in-browser.
+              *Processed by your chosen model.
+              <br />All else stays in-browser.
             </p>
           </TooltipContent>
         </Tooltip>

@@ -8,7 +8,8 @@
     "tooltipRecording": "Recording... saved locally*",
     "tooltipRecord": "Record a private voice note*",
     "listening": "Listening...",
-    "tooltipBusy": "Transcribing via Whisper..."
+    "tooltipBusy": "Transcribing via Whisper...",
+    "cancelRecording": "Cancel recording"
   },
   "Footer": {
     "copyright": "© 2025 Locally Loop",
