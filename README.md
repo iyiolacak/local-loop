@@ -7,6 +7,7 @@
 ## Why Locally LocalDoRush?
 
 LocalDoRush is the productivity tool for people who hate productivity tools.
+![output](https://github.com/user-attachments/assets/f8f0b1d0-abbb-4ca6-b0ec-ba37e9b69e2d)
 
 No clutter. No planning overhead. Just **type what you did or will do next** and press **Enter** — the app handles the rest. Every entry is logged, XP is awarded, and you get a sharp, actionable next step from an LLM **you control**.
 
