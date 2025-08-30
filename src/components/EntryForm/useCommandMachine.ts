@@ -5,6 +5,7 @@ import { useMachine } from "@xstate/react";
 import { useMemo, useCallback } from "react";
 import { commandMachine } from "./command.machine";
 import { useVoiceRecorder } from "@/app/hooks/useVoiceRecorder";
+import { useOverlayGate } from "./useOverlayGate";
 
 export function useCommandMachine() {
   const [state, send] = useMachine(commandMachine);
@@ -14,6 +15,8 @@ export function useCommandMachine() {
   const isIdle = state.matches("idle");
   const isTyping = state.matches("typing");
   const isRecording = state.matches("recording");
+  // Keep overlay tied strictly to "hold" (recording). Change to || isBusy if you want.
+  const overlayActive = useOverlayGate(isRecording, 80);
   const isSubmitting = state.matches("submitting");
   const isTranscribing = state.matches("transcribing");
   const hasError = state.matches("error");
@@ -38,8 +41,15 @@ export function useCommandMachine() {
   const startRecording = useCallback(async () => {
     // Start mic capture first so UX shows recording immediately,
     // then move the machine into 'recording' state.
-    await recorder.start();
     send({ type: "RECORD" });
+    try {
+      await recorder.start();
+    } catch (err) {
+      // revert machine state if recorder fails
+      console.error("Recorder failed to start:", err);
+      send({ type: "CANCEL_RECORDING" });
+      throw err; // re-throw to propagate error
+    }
   }, [recorder, send]);
 
   const stopRecording = useCallback(async () => {
@@ -82,6 +92,8 @@ export function useCommandMachine() {
       submit,
       retry,
       dismissError,
+      // expose overlay for the view
+      overlayActive,
       // recorder telemetry for UI (optional)
       volume: recorder.volume ?? 0,
       recorderStatus: recorder.status,
@@ -107,6 +119,8 @@ export function useCommandMachine() {
       submit,
       retry,
       dismissError,
+      // expose overlay for the view
+      overlayActive,
       recorder.volume,
       recorder.status,
       recorder.isRecording,

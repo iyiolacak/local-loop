@@ -18,6 +18,11 @@ No clutter. No planning overhead. Just **type what you did or will do next** and
 * **Only one connection**: to the LLM you choose (BYOK OpenAI).
 * **Zero busywork**: no grooming lists or shuffling boards.
 
+Capture → Nudge → Do → Reward → Reflect → Repeat
+
+The result: compounding progress without project management ceremony.
+
+
 If you’ve ever dropped a to‑do app because it became a chore, LocalDoRush is the antidote.
 
 ---
